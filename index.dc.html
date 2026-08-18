@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<template id="__bundler_thumbnail" data-bg-color="#0A0F1E">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0A0F1E"/>
+    <text x="600" y="420" text-anchor="middle" font-family="monospace" font-size="120" font-weight="700" fill="#06B6D4">FS</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', sans-serif; overflow-x:hidden; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+[contenteditable="true"] a { -webkit-user-modify: read-only; user-modify: read-only; cursor: pointer; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]) { outline: 1px dashed #06B6D4; outline-offset: 2px; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]):focus { outline: 2px dashed #06B6D4; }
+</style>
+</helmet>
+
+<div style="min-height:100vh">
+
+<dc-import name="SiteHeader" active="overview" is-admin="{{ isAdmin }}" not-admin="{{ notAdmin }}" show-login="{{ showLogin }}" err="{{ err }}" saved-msg="{{ savedMsg }}" id-ref="{{ idRef }}" pw-ref="{{ pwRef }}" do-login="{{ doLogin }}" logout="{{ logout }}" open-login="{{ openLogin }}" close-login="{{ closeLogin }}" stop-click="{{ stopClick }}" on-pw-key-down="{{ onPwKeyDown }}" save-all="{{ saveAll }}" hint-size="100%,64px"></dc-import>
+
+<section id="hero" contentEditable="{{ isAdmin }}" style="position:relative;min-height:100vh;display:flex;align-items:center;padding:120px 48px 80px;overflow:hidden">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(37,99,235,0.06) 1px, transparent 1px),linear-gradient(90deg, rgba(37,99,235,0.06) 1px, transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)"></div>
+  <div style="position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(37,99,235,0.15) 0%, transparent 70%);pointer-events:none"></div>
+
+  <div style="position:relative;z-index:1;max-width:1100px;margin:0 auto;width:100%">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#06B6D4;margin-bottom:24px;display:flex;align-items:center;gap:12px;animation:fadeUp 0.6s ease forwards">
+      <span style="display:block;width:32px;height:1px;background:#06B6D4"></span>
+      정부 지원 연구개발과제 · AuroraFS Consortium
+    </div>
+
+    <h1 style="font-size:clamp(36px,5.5vw,72px);font-weight:900;line-height:1.1;letter-spacing:-0.02em;margin:0 0 12px;word-break:keep-all;animation:fadeUp 0.6s ease forwards;animation-delay:0.1s;opacity:0">
+      <span style="background:linear-gradient(135deg,#2563EB 0%,#06B6D4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">AI 반도체 클라우드를 위한</span><br>
+      <span>고속 병렬 파일시스템 기술개발</span>
+    </h1>
+
+    <p style="font-size:clamp(16px,2vw,22px);font-weight:400;color:#94A3B8;max-width:720px;margin:0 0 48px;line-height:1.6;animation:fadeUp 0.6s ease forwards;animation-delay:0.2s;opacity:0">
+      데이터 집약 응용 지원을 위해 고대역폭, 확장성, 고가용성을 제공하는 AI 반도체 지원 병렬 파일시스템과 멀티모달 생성형 모델을 위한 데이터 플랫폼(AuroraFS)을 연구·개발합니다. 개발 성과는 GitHub 조직 Adv-FileSystem을 통해 공개됩니다.
+    </p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:48px;animation:fadeUp 0.6s ease forwards;animation-delay:0.3s;opacity:0">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.08em;padding:6px 14px;border-radius:2px;border:1px solid rgba(37,99,235,0.4);color:#2563EB;background:rgba(37,99,235,0.08);white-space:nowrap">NPU AI-Powered Storage</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.08em;padding:6px 14px;border-radius:2px;border:1px solid rgba(37,99,235,0.4);color:#2563EB;background:rgba(37,99,235,0.08);white-space:nowrap">WORM 제어</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.08em;padding:6px 14px;border-radius:2px;border:1px solid rgba(6,182,212,0.4);color:#06B6D4;background:rgba(6,182,212,0.08);white-space:nowrap">CXL Zero-Copy I/O</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.08em;padding:6px 14px;border-radius:2px;border:1px solid rgba(6,182,212,0.4);color:#06B6D4;background:rgba(6,182,212,0.08);white-space:nowrap">벡터 DB 인덱싱</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.08em;padding:6px 14px;border-radius:2px;border:1px solid rgba(124,58,237,0.4);color:#7C3AED;background:rgba(124,58,237,0.08);white-space:nowrap">멀티모달 특화 DB</span>
+    </div>
+
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:72px;animation:fadeUp 0.6s ease forwards;animation-delay:0.4s;opacity:0">
+      <a href="https://github.com/Adv-FileSystem" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:#2563EB;color:#fff;font-size:14px;font-weight:700;letter-spacing:0.03em;border-radius:4px;white-space:nowrap;text-decoration:none" style-hover="background:#1D4ED8">↓ GitHub 보기</a>
+      <a href="overview.dc.html" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border:1px solid rgba(148,163,184,0.12);color:#94A3B8;font-size:14px;font-weight:500;border-radius:4px;white-space:nowrap;text-decoration:none" style-hover="border-color:#06B6D4;color:#06B6D4">과제 소개 보기 →</a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:rgba(148,163,184,0.12);border:1px solid rgba(148,163,184,0.12);border-radius:8px;overflow:hidden;animation:fadeUp 0.6s ease forwards;animation-delay:0.5s;opacity:0">
+      <div style="padding:28px 24px;background:#0F172A">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:#06B6D4;margin-bottom:4px">3년 9개월</div>
+        <div style="font-size:12px;color:#94A3B8;letter-spacing:0.03em">수행 기간</div>
+      </div>
+      <div style="padding:28px 24px;background:#0F172A">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:#06B6D4;margin-bottom:4px">8개</div>
+        <div style="font-size:12px;color:#94A3B8;letter-spacing:0.03em">GitHub 저장소</div>
+      </div>
+      <div style="padding:28px 24px;background:#0F172A">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:#06B6D4;margin-bottom:4px">4개</div>
+        <div style="font-size:12px;color:#94A3B8;letter-spacing:0.03em">원천 기술</div>
+      </div>
+      <div style="padding:28px 24px;background:#0F172A">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:#06B6D4;margin-bottom:4px">11개</div>
+        <div style="font-size:12px;color:#94A3B8;letter-spacing:0.03em">End Product</div>
+      </div>
+      <div style="padding:28px 24px;background:#0F172A">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:#06B6D4;margin-bottom:4px">100%</div>
+        <div style="font-size:12px;color:#94A3B8;letter-spacing:0.03em">오픈소스 공개</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="overview" contentEditable="{{ isAdmin }}" style="padding:96px 48px;background:#0F172A">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#06B6D4;margin-bottom:12px">// Project Overview</div>
+    <h2 style="font-size:clamp(24px,3vw,40px);font-weight:800;line-height:1.2;letter-spacing:-0.01em;margin:0 0 16px">사업 개요</h2>
+    <div style="width:48px;height:2px;background:linear-gradient(90deg,#2563EB,#06B6D4);margin-bottom:48px"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(148,163,184,0.12);border:1px solid rgba(148,163,184,0.12);border-radius:8px;overflow:hidden">
+      <div style="background:#0F172A;padding:36px 32px;border-left:3px solid #2563EB">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#64748B;text-transform:uppercase;margin-bottom:12px">과제명</div>
+        <div style="font-size:17px;font-weight:500;color:#F1F5F9;line-height:1.6">AI반도체 클라우드를 위한 고속 병렬 파일시스템 기술개발</div>
+      </div>
+      <div style="background:#0F172A;padding:36px 32px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#64748B;text-transform:uppercase;margin-bottom:12px">수행 기간</div>
+        <div style="font-size:17px;font-weight:500;color:#F1F5F9;line-height:1.6">2025. 04. 01 &ndash; 2028. 12. 31 (총 3년 9개월)</div>
+      </div>
+      <div style="background:#0F172A;padding:36px 32px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#64748B;text-transform:uppercase;margin-bottom:12px">공개 저장소</div>
+        <div style="font-size:17px;font-weight:500;line-height:1.6"><a href="https://github.com/Adv-FileSystem" target="_blank" rel="noopener" style="color:#06B6D4;text-underline-offset:3px;text-decoration:none" style-hover="text-decoration:underline">github.com/Adv-FileSystem</a> · 8개 저장소</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" is-admin="{{ isAdmin }}" hint-size="100%,220px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { isAdmin: false, showLogin: false, err: '' };
+  idRef = React.createRef();
+  pwRef = React.createRef();
+  sectionIds = ['hero', 'overview', 'footer'];
+
+  async componentDidMount() {
+    const shared = await import('./site-shared.js');
+    this.shared = shared;
+    this.sb = shared.createClient();
+    await shared.loadContent(this.sb, this.sectionIds);
+  }
+
+  stopClick = (e) => e.stopPropagation();
+  onPwKeyDown = (e) => { if (e.key === 'Enter') this.doLogin(); };
+  openLogin = () => this.setState({ showLogin: true, err: '' });
+  closeLogin = () => this.setState({ showLogin: false, err: '' });
+  logout = () => this.setState({ isAdmin: false });
+
+  saveAll = async () => {
+    const { error } = await this.shared.saveSections(this.sb, this.sectionIds);
+    if (!error) {
+      this.setState({ savedMsg: true });
+      clearTimeout(this._savedTimer);
+      this._savedTimer = setTimeout(() => this.setState({ savedMsg: false }), 1500);
+    } else {
+      this.setState({ err: '저장 실패: ' + error.message });
+    }
+  };
+
+  doLogin = async () => {
+    const id = this.idRef.current ? this.idRef.current.value : '';
+    const pw = this.pwRef.current ? this.pwRef.current.value : '';
+    const ok = await this.shared.checkLogin(this.sb, id, pw);
+    if (!ok) { this.setState({ err: '아이디 또는 비밀번호가 올바르지 않습니다.' }); return; }
+    this.setState({ isAdmin: true, showLogin: false, err: '' });
+  };
+
+  renderVals() {
+    return {
+      isAdmin: this.state.isAdmin,
+      notAdmin: !this.state.isAdmin,
+      showLogin: this.state.showLogin,
+      err: this.state.err,
+      savedMsg: this.state.savedMsg,
+      saveAll: this.saveAll,
+      idRef: this.idRef,
+      pwRef: this.pwRef,
+      doLogin: this.doLogin,
+      logout: this.logout,
+      openLogin: this.openLogin,
+      closeLogin: this.closeLogin,
+      stopClick: this.stopClick,
+      onPwKeyDown: this.onPwKeyDown
+    };
+  }
+}
+</script>
+</body>
+</html>

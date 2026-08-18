@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<template id="__bundler_thumbnail" data-bg-color="#0A0F1E">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0A0F1E"/>
+    <text x="600" y="420" text-anchor="middle" font-family="monospace" font-size="120" font-weight="700" fill="#06B6D4">FS</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', sans-serif; overflow-x:hidden; }
+[contenteditable="true"] a { -webkit-user-modify: read-only; user-modify: read-only; cursor: pointer; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]) { outline: 1px dashed #06B6D4; outline-offset: 2px; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]):focus { outline: 2px dashed #06B6D4; }
+</style>
+</helmet>
+
+<div style="min-height:100vh">
+
+<dc-import name="SiteHeader" active="goals" is-admin="{{ isAdmin }}" not-admin="{{ notAdmin }}" show-login="{{ showLogin }}" err="{{ err }}" saved-msg="{{ savedMsg }}" id-ref="{{ idRef }}" pw-ref="{{ pwRef }}" do-login="{{ doLogin }}" logout="{{ logout }}" open-login="{{ openLogin }}" close-login="{{ closeLogin }}" stop-click="{{ stopClick }}" on-pw-key-down="{{ onPwKeyDown }}" save-all="{{ saveAll }}" hint-size="100%,64px"></dc-import>
+
+<section id="goals" contentEditable="{{ isAdmin }}" style="padding:160px 48px 96px;background:#0A0F1E">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#06B6D4;margin-bottom:12px">// R&amp;D Goals</div>
+    <h2 style="font-size:clamp(24px,3vw,40px);font-weight:800;line-height:1.2;letter-spacing:-0.01em;margin:0 0 16px">연구개발과제의 최종 목표</h2>
+    <div style="width:48px;height:2px;background:linear-gradient(90deg,#2563EB,#06B6D4);margin-bottom:32px"></div>
+
+    <p style="font-size:19px;font-weight:500;color:#F1F5F9;line-height:1.7;max-width:820px;margin:0 0 56px;padding:24px 28px;background:#0F172A;border-left:3px solid #06B6D4;border-radius:4px">데이터 집약 응용 지원을 위해 고대역폭, 확장성, 고가용성을 제공하는 AI 반도체 지원 병렬 파일시스템 및 멀티모달 생성형 모델을 위한 데이터 플랫폼 개발</p>
+
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 4px;color:#F1F5F9">세부 목표 · 주요 기능</h3>
+    <div style="display:flex;flex-direction:column;margin-bottom:56px">
+      <div style="display:grid;grid-template-columns:40px 1fr;gap:20px;padding:24px 0;border-bottom:1px solid rgba(148,163,184,0.12)">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#06B6D4;font-weight:700">01</span>
+        <p style="margin:0;font-size:15px;color:#94A3B8;line-height:1.8">In-Storage Computing 환경에서 성능 최적화 및 모듈 이식 지원 기능 제공</p>
+      </div>
+      <div style="display:grid;grid-template-columns:40px 1fr;gap:20px;padding:24px 0;border-bottom:1px solid rgba(148,163,184,0.12)">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#06B6D4;font-weight:700">02</span>
+        <p style="margin:0;font-size:15px;color:#94A3B8;line-height:1.8">고속 병렬 입출력 처리 및 ML 프레임워크 연동 최적화 지원 기능 제공</p>
+      </div>
+      <div style="display:grid;grid-template-columns:40px 1fr;gap:20px;padding:24px 0;border-bottom:1px solid rgba(148,163,184,0.12)">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#06B6D4;font-weight:700">03</span>
+        <p style="margin:0;font-size:15px;color:#94A3B8;line-height:1.8">eBPF 기반 성능 및 장애 예측을 위한 메트릭 수집·모니터링 기능 제공</p>
+      </div>
+      <div style="display:grid;grid-template-columns:40px 1fr;gap:20px;padding:24px 0;border-bottom:1px solid rgba(148,163,184,0.12)">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#06B6D4;font-weight:700">04</span>
+        <p style="margin:0;font-size:15px;color:#94A3B8;line-height:1.8">데이터 접근 패턴 분석 기반 자원 확장 및 최적화 기능 제공</p>
+      </div>
+      <div style="display:grid;grid-template-columns:40px 1fr;gap:20px;padding:24px 0">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#06B6D4;font-weight:700">05</span>
+        <p style="margin:0;font-size:15px;color:#94A3B8;line-height:1.8">스토리지 노드 및 클러스터의 무중단 증설과 안정화 지원 기능 제공</p>
+      </div>
+    </div>
+
+    <div style="padding:32px 28px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.15em;color:#94A3B8;text-transform:uppercase;margin-bottom:16px">End Product</div>
+      <ul style="margin:0;padding-left:1.2em;font-size:14px;color:#94A3B8;line-height:2;columns:2;column-gap:40px">
+        <li>고속 병렬 파일 시스템 지원 스토리지 노드 구성 방법서</li>
+        <li>In-Storage Computing 및 모듈 이식 요구사항 분석서</li>
+        <li>멀티모달 데이터 최적화 객체 저장소 스토리지 아키텍처 요소 기술 분석서</li>
+        <li>페타급 SSD를 위한 I/O 스택 최적화 기술 분석서</li>
+        <li>CXL 프로토콜 기반 병렬 파일 시스템 최적화 적용 모듈 (SW)</li>
+        <li>CXL3.1 스위치 기반 FPGA 최적화 (SW)</li>
+        <li>하이브리드 PMEM 기반 메타데이터 가속 처리 모듈 (SW)</li>
+        <li>OLTP 워크로드 처리 최적화를 위한 데이터 배치 및 무효 데이터 관리 모듈 (SW)</li>
+        <li>멀티모달 데이터 거버넌스 관리 모듈 및 외부 연동 API 모듈 (SW)</li>
+        <li>차세대 데이터 센터 최적화 객체 저장소 기반 병렬 파일시스템 시제품 (SW)</li>
+        <li>AI-Powered Storage 지원 고성능 병렬 파일 시스템 엔진 모듈 (SW)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" is-admin="{{ isAdmin }}" hint-size="100%,220px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { isAdmin: false, showLogin: false, err: '' };
+  idRef = React.createRef();
+  pwRef = React.createRef();
+  sectionIds = ['goals', 'footer'];
+
+  async componentDidMount() {
+    const shared = await import('./site-shared.js');
+    this.shared = shared;
+    this.sb = shared.createClient();
+    await shared.loadContent(this.sb, this.sectionIds);
+  }
+
+  stopClick = (e) => e.stopPropagation();
+  onPwKeyDown = (e) => { if (e.key === 'Enter') this.doLogin(); };
+  openLogin = () => this.setState({ showLogin: true, err: '' });
+  closeLogin = () => this.setState({ showLogin: false, err: '' });
+  logout = () => this.setState({ isAdmin: false });
+
+  saveAll = async () => {
+    const { error } = await this.shared.saveSections(this.sb, this.sectionIds);
+    if (!error) {
+      this.setState({ savedMsg: true });
+      clearTimeout(this._savedTimer);
+      this._savedTimer = setTimeout(() => this.setState({ savedMsg: false }), 1500);
+    } else {
+      this.setState({ err: '저장 실패: ' + error.message });
+    }
+  };
+
+  doLogin = async () => {
+    const id = this.idRef.current ? this.idRef.current.value : '';
+    const pw = this.pwRef.current ? this.pwRef.current.value : '';
+    const ok = await this.shared.checkLogin(this.sb, id, pw);
+    if (!ok) { this.setState({ err: '아이디 또는 비밀번호가 올바르지 않습니다.' }); return; }
+    this.setState({ isAdmin: true, showLogin: false, err: '' });
+  };
+
+  renderVals() {
+    return {
+      isAdmin: this.state.isAdmin,
+      notAdmin: !this.state.isAdmin,
+      showLogin: this.state.showLogin,
+      err: this.state.err,
+      savedMsg: this.state.savedMsg,
+      saveAll: this.saveAll,
+      idRef: this.idRef,
+      pwRef: this.pwRef,
+      doLogin: this.doLogin,
+      logout: this.logout,
+      openLogin: this.openLogin,
+      closeLogin: this.closeLogin,
+      stopClick: this.stopClick,
+      onPwKeyDown: this.onPwKeyDown
+    };
+  }
+}
+</script>
+</body>
+</html>

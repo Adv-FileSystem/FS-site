@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<template id="__bundler_thumbnail" data-bg-color="#0A0F1E">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0A0F1E"/>
+    <text x="600" y="420" text-anchor="middle" font-family="monospace" font-size="120" font-weight="700" fill="#06B6D4">FS</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', sans-serif; overflow-x:hidden; }
+[contenteditable="true"] a { -webkit-user-modify: read-only; user-modify: read-only; cursor: pointer; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]) { outline: 1px dashed #06B6D4; outline-offset: 2px; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]):focus { outline: 2px dashed #06B6D4; }
+</style>
+</helmet>
+
+<div style="min-height:100vh">
+
+<dc-import name="SiteHeader" active="tech" is-admin="{{ isAdmin }}" not-admin="{{ notAdmin }}" show-login="{{ showLogin }}" err="{{ err }}" saved-msg="{{ savedMsg }}" id-ref="{{ idRef }}" pw-ref="{{ pwRef }}" do-login="{{ doLogin }}" logout="{{ logout }}" open-login="{{ openLogin }}" close-login="{{ closeLogin }}" stop-click="{{ stopClick }}" on-pw-key-down="{{ onPwKeyDown }}" save-all="{{ saveAll }}" hint-size="100%,64px"></dc-import>
+
+<section id="tech" contentEditable="{{ isAdmin }}" style="padding:160px 48px 96px;background:#0F172A">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#06B6D4;margin-bottom:12px">// Core Technology</div>
+    <h2 style="font-size:clamp(24px,3vw,40px);font-weight:800;line-height:1.2;letter-spacing:-0.01em;margin:0 0 16px">개발 원천 기술</h2>
+    <p style="font-size:16px;color:#94A3B8;max-width:680px;line-height:1.8;margin:0 0 56px">과제가 제시하는 네 가지 원천 기술입니다.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <div style="padding:32px 28px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+        <span style="font-size:28px;margin-bottom:16px;display:block">🧠</span>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#64748B;letter-spacing:0.1em;margin-bottom:10px">원천성 #1</div>
+        <h3 style="font-size:17px;font-weight:700;margin:0 0 10px;line-height:1.4;color:#F1F5F9">NPU 기반 AI-Powered Storage 및 WORM 기술</h3>
+        <ul style="margin:0;padding-left:1.1em;font-size:14px;color:#94A3B8;line-height:1.9">
+          <li>저전력·경량화 NPU를 활용한 AI-Powered Storage 지원 고속 병렬파일시스템 기술</li>
+          <li>멀티모달 학습·연산 대상 동적 워크로드 대응과 스토리지 장애 탐지 기술 구현</li>
+          <li>공격적인 데이터로더(DataLoader) 지원을 위한 WORM(Write Once Read Many) 제어 기술</li>
+        </ul>
+      </div>
+      <div style="padding:32px 28px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+        <span style="font-size:28px;margin-bottom:16px;display:block">⚡</span>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#64748B;letter-spacing:0.1em;margin-bottom:10px">원천성 #2</div>
+        <h3 style="font-size:17px;font-weight:700;margin:0 0 10px;line-height:1.4;color:#F1F5F9">CXL 메모리 기반 Zero-Copy 초고속 입출력 기술</h3>
+        <ul style="margin:0;padding-left:1.1em;font-size:14px;color:#94A3B8;line-height:1.9">
+          <li>저지연 네이티브 스토리지 인터페이스 기반의 커널 독립적 입출력 기술</li>
+          <li>사용자 공간 중심 비휘발성 메모리(PMDK) 및 플래시(SPDK) 스토리지 최적화 기술</li>
+          <li>Scatter-Gather RDMA 기반 메모리 원격 DMA를 통한 고속 저지연 오브젝트 전송 기술</li>
+          <li>DPDK 및 OFI(Open Fabric Interface)를 활용한 고속 스토리지 네트워킹 기술</li>
+        </ul>
+      </div>
+      <div style="padding:32px 28px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+        <span style="font-size:28px;margin-bottom:16px;display:block">🔑</span>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#64748B;letter-spacing:0.1em;margin-bottom:10px">원천성 #3</div>
+        <h3 style="font-size:17px;font-weight:700;margin:0 0 10px;line-height:1.4;color:#F1F5F9">키-값 인덱싱 구조 기반 벡터 DB 멀티모달 데이터 플랫폼</h3>
+        <ul style="margin:0;padding-left:1.1em;font-size:14px;color:#94A3B8;line-height:1.9">
+          <li>키-값 인덱싱과 AI 기반 벡터 인덱싱을 통한 데이터 검색 기술</li>
+        </ul>
+      </div>
+      <div style="padding:32px 28px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+        <span style="font-size:28px;margin-bottom:16px;display:block">🗄️</span>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#64748B;letter-spacing:0.1em;margin-bottom:10px">원천성 #4</div>
+        <h3 style="font-size:17px;font-weight:700;margin:0 0 10px;line-height:1.4;color:#F1F5F9">멀티모달 모델 학습 워크로드 특화 데이터베이스 기술</h3>
+        <ul style="margin:0;padding-left:1.1em;font-size:14px;color:#94A3B8;line-height:1.9">
+          <li>학습 워크로드를 위한 데이터 배치 및 무효 데이터 관리 기술 (Hotness 고려)</li>
+          <li>학습 워크로드를 위한 로우-칼럼 융합 데이터베이스 구조 설계</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" is-admin="{{ isAdmin }}" hint-size="100%,220px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { isAdmin: false, showLogin: false, err: '' };
+  idRef = React.createRef();
+  pwRef = React.createRef();
+  sectionIds = ['tech', 'footer'];
+
+  async componentDidMount() {
+    const shared = await import('./site-shared.js');
+    this.shared = shared;
+    this.sb = shared.createClient();
+    await shared.loadContent(this.sb, this.sectionIds);
+  }
+
+  stopClick = (e) => e.stopPropagation();
+  onPwKeyDown = (e) => { if (e.key === 'Enter') this.doLogin(); };
+  openLogin = () => this.setState({ showLogin: true, err: '' });
+  closeLogin = () => this.setState({ showLogin: false, err: '' });
+  logout = () => this.setState({ isAdmin: false });
+
+  saveAll = async () => {
+    const { error } = await this.shared.saveSections(this.sb, this.sectionIds);
+    if (!error) {
+      this.setState({ savedMsg: true });
+      clearTimeout(this._savedTimer);
+      this._savedTimer = setTimeout(() => this.setState({ savedMsg: false }), 1500);
+    } else {
+      this.setState({ err: '저장 실패: ' + error.message });
+    }
+  };
+
+  doLogin = async () => {
+    const id = this.idRef.current ? this.idRef.current.value : '';
+    const pw = this.pwRef.current ? this.pwRef.current.value : '';
+    const ok = await this.shared.checkLogin(this.sb, id, pw);
+    if (!ok) { this.setState({ err: '아이디 또는 비밀번호가 올바르지 않습니다.' }); return; }
+    this.setState({ isAdmin: true, showLogin: false, err: '' });
+  };
+
+  renderVals() {
+    return {
+      isAdmin: this.state.isAdmin,
+      notAdmin: !this.state.isAdmin,
+      showLogin: this.state.showLogin,
+      err: this.state.err,
+      savedMsg: this.state.savedMsg,
+      saveAll: this.saveAll,
+      idRef: this.idRef,
+      pwRef: this.pwRef,
+      doLogin: this.doLogin,
+      logout: this.logout,
+      openLogin: this.openLogin,
+      closeLogin: this.closeLogin,
+      stopClick: this.stopClick,
+      onPwKeyDown: this.onPwKeyDown
+    };
+  }
+}
+</script>
+</body>
+</html>

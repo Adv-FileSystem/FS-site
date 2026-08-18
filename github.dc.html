@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<template id="__bundler_thumbnail" data-bg-color="#0A0F1E">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0A0F1E"/>
+    <text x="600" y="420" text-anchor="middle" font-family="monospace" font-size="120" font-weight="700" fill="#06B6D4">FS</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', sans-serif; overflow-x:hidden; }
+[contenteditable="true"] a { -webkit-user-modify: read-only; user-modify: read-only; cursor: pointer; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]) { outline: 1px dashed #06B6D4; outline-offset: 2px; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]):focus { outline: 2px dashed #06B6D4; }
+@keyframes cursor-blink { 0%, 50% { opacity:1; } 51%, 100% { opacity:0; } }
+</style>
+</helmet>
+
+<div style="min-height:100vh">
+
+<dc-import name="SiteHeader" active="github" is-admin="{{ isAdmin }}" not-admin="{{ notAdmin }}" show-login="{{ showLogin }}" err="{{ err }}" saved-msg="{{ savedMsg }}" id-ref="{{ idRef }}" pw-ref="{{ pwRef }}" do-login="{{ doLogin }}" logout="{{ logout }}" open-login="{{ openLogin }}" close-login="{{ closeLogin }}" stop-click="{{ stopClick }}" on-pw-key-down="{{ onPwKeyDown }}" save-all="{{ saveAll }}" hint-size="100%,64px"></dc-import>
+
+<section id="github" contentEditable="{{ isAdmin }}" style="padding:160px 48px 120px;background:#0F172A">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#06B6D4;margin-bottom:16px">// Open Source</div>
+    <h2 style="font-size:clamp(32px,4.5vw,56px);font-weight:800;line-height:1;letter-spacing:-0.02em;margin:0 0 20px;color:#F1F5F9">GITHUB</h2>
+    <p style="font-size:16px;color:#94A3B8;white-space:nowrap;line-height:1.8;margin:0 0 28px">Adv-FileSystem은 완전한 오픈소스 프로젝트입니다. 누구나 기여할 수 있으며, 8개의 저장소로 구성되어 있습니다.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px">
+      <a href="https://github.com/Adv-FileSystem" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 24px;background:#2563EB;color:#fff;font-size:14px;font-weight:700;border-radius:6px;text-decoration:none" style-hover="background:#1D4ED8"><svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-1.24-.01-1.88 0 0-2.23.48-2.7-.95 0 0-.36-.92-.88-1.16 0 0-.72-.5.05-.49 0 0 .78.06 1.21.81.68 1.2 1.83.86 2.28.65.07-.48.28-.86.51-1.05-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 2.39-.01 2.39s.15.25.55.38C13.71 14.53 16 11.54 16 8c0-4.42-3.58-8-8-8z"/></svg>Adv-FileSystem ↗</a>
+      <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ openAddRepo }}" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:transparent;color:#06B6D4;font-size:14px;font-weight:700;white-space:nowrap;border:1px solid rgba(6,182,212,0.4);border-radius:6px;cursor:pointer" style-hover="background:rgba(6,182,212,0.08)">+ 레포지토리 추가</button>
+      </sc-if>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:40px">
+      <div style="display:flex;align-items:center;gap:14px;padding:20px 22px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:10px">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(6,182,212,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#06B6D4"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7-5.4-4.7 7.1-.7z"/></svg>
+        </div>
+        <div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;color:#F1F5F9;line-height:1">{{ totalStars }}</div><div style="font-size:12px;color:#64748B;margin-top:5px">Stars</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:20px 22px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:10px">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(139,92,246,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M6 8.5v3a3 3 0 0 0 3 3M18 8.5v3a3 3 0 0 0-3 3"/></svg>
+        </div>
+        <div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;color:#F1F5F9;line-height:1">{{ totalForks }}</div><div style="font-size:12px;color:#64748B;margin-top:5px">Forks</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:20px 22px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:10px">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(16,185,129,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="21" y2="12"/><circle cx="12" cy="12" r="4"/></svg>
+        </div>
+        <div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;color:#F1F5F9;line-height:1">{{ totalCommits }}</div><div style="font-size:12px;color:#64748B;margin-top:5px">Commits</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:20px 22px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:10px">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="5" r="2.2"/><circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M6 7.2V16.8M6 9c0 4 4 3 9 3"/></svg>
+        </div>
+        <div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;color:#F1F5F9;line-height:1">{{ totalBranches }}</div><div style="font-size:12px;color:#64748B;margin-top:5px">Branches</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:20px 22px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:10px">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(236,72,153,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.6 12.7 20.5a2 2 0 0 1-2.8 0l-6.4-6.4a2 2 0 0 1 0-2.8L11.4 3.4a2 2 0 0 1 1.4-.6H19a2 2 0 0 1 2 2v5.4a2 2 0 0 1-.4 1.4z"/><circle cx="16.5" cy="7.5" r="1.2" fill="#EC4899" stroke="none"/></svg>
+        </div>
+        <div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;color:#F1F5F9;line-height:1">{{ totalTags }}</div><div style="font-size:12px;color:#64748B;margin-top:5px">Tags</div></div>
+      </div>
+    </div>
+
+    <sc-if value="{{ langBars }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:56px;padding:32px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:10px;display:flex;gap:48px;align-items:center;flex-wrap:wrap">
+        <div style="position:relative;width:150px;height:150px;flex-shrink:0">
+          <svg width="150" height="150" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="{{ donutR }}" fill="none" stroke="rgba(148,163,184,0.08)" stroke-width="16"/>
+            <sc-for list="{{ langBars }}" as="lb" hint-placeholder-count="3">
+              <circle cx="70" cy="70" r="{{ donutR }}" fill="none" stroke="{{ lb.color }}" stroke-width="16" stroke-dasharray="{{ lb.dasharray }}" stroke-dashoffset="{{ lb.dashoffset }}" transform="rotate(-90 70 70)" style="transition:stroke-dasharray 0.6s ease"/>
+            </sc-for>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+            <sc-if value="{{ topLang }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:20px;font-weight:800;color:#F1F5F9;font-family:'JetBrains Mono',monospace">{{ topLang.pctLabel }}</div>
+              <div style="font-size:11px;color:#64748B;margin-top:2px">{{ topLang.name }}</div>
+            </sc-if>
+          </div>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#64748B;margin-bottom:16px">Language Breakdown</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ langBars }}" as="lb" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:10px;height:10px;border-radius:50%;background:{{ lb.color }};flex-shrink:0;display:inline-block"></span>
+                <span style="color:#F1F5F9;font-weight:600;font-size:14px;min-width:90px">{{ lb.name }}</span>
+                <span style="color:#64748B;font-family:'JetBrains Mono',monospace;font-size:13px">{{ lb.pctLabel }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showAddRepo }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed;inset:0;z-index:200;background:rgba(10,15,30,0.75);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center" onClick="{{ closeAddRepo }}">
+        <div style="width:400px;background:#0F172A;border:1px solid rgba(148,163,184,0.15);border-radius:8px;padding:32px" onClick="{{ stopClick }}">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#06B6D4;margin-bottom:14px">Add Repository</div>
+          <h3 style="font-size:18px;font-weight:700;margin:0 0 20px;color:#F1F5F9">레포지토리 추가</h3>
+          <input ref="{{ titleRef }}" type="text" placeholder="Title" style="width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:12px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.2);border-radius:4px;color:#F1F5F9;font-size:14px" />
+          <input ref="{{ urlRef }}" type="text" placeholder="GitHub URL (https://github.com/org/repo)" style="width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:12px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.2);border-radius:4px;color:#F1F5F9;font-size:14px" />
+          <textarea ref="{{ descRef }}" placeholder="Description" rows="3" style="width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:8px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.2);border-radius:4px;color:#F1F5F9;font-size:14px;font-family:inherit;resize:vertical"></textarea>
+          <sc-if value="{{ addRepoErr }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;color:#F87171;margin-bottom:12px">{{ addRepoErr }}</div>
+          </sc-if>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button onClick="{{ closeAddRepo }}" style="flex:1;padding:10px;background:transparent;border:1px solid rgba(148,163,184,0.2);border-radius:4px;color:#94A3B8;font-size:14px;cursor:pointer">취소</button>
+            <button onClick="{{ submitAddRepo }}" style="flex:1;padding:10px;background:#2563EB;border:none;border-radius:4px;color:#fff;font-size:14px;font-weight:700;cursor:pointer">추가</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:56px">
+      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:#06B6D4">{{ repoCount }}</div>
+        <div style="font-size:12px;color:#94A3B8;margin-top:6px">Repositories</div>
+      </div>
+      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:#06B6D4">{{ totalStars }}</div>
+        <div style="font-size:12px;color:#94A3B8;margin-top:6px">Total Stars</div>
+      </div>
+      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:#06B6D4">{{ totalForks }}</div>
+        <div style="font-size:12px;color:#94A3B8;margin-top:6px">Total Forks</div>
+      </div>
+      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:#06B6D4">{{ licenseLabel }}</div>
+        <div style="font-size:12px;color:#94A3B8;margin-top:6px">License</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <sc-for list="{{ repos }}" as="repo" hint-placeholder-count="8">
+        <div style="padding:32px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:10px;flex-wrap:wrap">
+            <a href="{{ repo.url }}" target="_blank" rel="noopener" style="font-size:18px;font-weight:700;color:#F1F5F9;text-decoration:none" style-hover="color:#06B6D4">{{ repo.name }} ↗</a>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#64748B">{{ repo.category }}</span>
+          </div>
+          <p style="font-size:14px;color:#94A3B8;line-height:1.8;margin:0 0 16px">{{ repo.desc }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px">
+            <sc-if value="{{ repo.lang }}" hint-placeholder-val="{{ true }}">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#06B6D4;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.3);padding:3px 10px;border-radius:2px">{{ repo.lang }}</span>
+            </sc-if>
+            <sc-if value="{{ repo.forkOf }}" hint-placeholder-val="{{ false }}">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.12);padding:3px 10px;border-radius:2px;white-space:nowrap">Fork · {{ repo.forkOf }}</span>
+            </sc-if>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.12);padding:3px 10px;border-radius:2px;white-space:nowrap">★ {{ repo.stars }} · ⑂ {{ repo.forks }}</span>
+            <sc-if value="{{ repo.lastCommitDate }}" hint-placeholder-val="{{ false }}">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.12);padding:3px 10px;border-radius:2px;white-space:nowrap">최근 커밋 {{ repo.lastCommitDate }}</span>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" is-admin="{{ isAdmin }}" hint-size="100%,220px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { isAdmin: false, showLogin: false, err: '' };
+  idRef = React.createRef();
+  pwRef = React.createRef();
+  sectionIds = ['github', 'footer'];
+
+  titleRef = React.createRef();
+  urlRef = React.createRef();
+  descRef = React.createRef();
+
+  async componentDidMount() {
+    const shared = await import('./site-shared.js');
+    this.shared = shared;
+    this.sb = shared.createClient();
+    await shared.loadContent(this.sb, this.sectionIds);
+    this.loadRepoStats();
+    this.loadCustomRepos();
+  }
+
+  loadCustomRepos = async () => {
+    const { data, error } = await this.sb.from('custom_repos').select('*').order('created_at', { ascending: true });
+    if (error || !data) return;
+    this.setState({ customRepos: data });
+    this.loadCustomRepoStats(data);
+  };
+
+  parseOwnerRepo = (url) => {
+    const m = (url || '').match(/github\.com\/([^\/]+)\/([^\/#?]+)/i);
+    if (!m) return null;
+    return { owner: m[1], repo: m[2].replace(/\.git$/, '') };
+  };
+
+  fetchRepoStats = async (owner, repo) => {
+    try {
+      const [r, commitsRes, branches, tags, langs] = await Promise.all([
+        fetch('https://api.github.com/repos/' + owner + '/' + repo).then(r => r.ok ? r.json() : null),
+        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/commits?per_page=1'),
+        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/branches?per_page=100').then(r => r.ok ? r.json() : null),
+        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/tags?per_page=100').then(r => r.ok ? r.json() : null),
+        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/languages').then(r => r.ok ? r.json() : null)
+      ]);
+      if (!r) return { name: repo, error: true };
+      const c = commitsRes.ok ? await commitsRes.json() : null;
+      const commit = Array.isArray(c) && c[0];
+      let commitCount = Array.isArray(c) ? c.length : 0;
+      const link = commitsRes.headers.get('Link');
+      if (link) {
+        const match = link.match(/&page=(\d+)>; rel="last"/);
+        if (match) commitCount = parseInt(match[1]);
+      }
+      return {
+        name: repo,
+        stars: r.stargazers_count,
+        forks: r.forks_count,
+        openIssues: r.open_issues_count,
+        commitCount,
+        branchCount: Array.isArray(branches) ? branches.length : 0,
+        tagCount: Array.isArray(tags) ? tags.length : 0,
+        languages: langs && typeof langs === 'object' ? langs : {},
+        lastCommitDate: commit ? new Date(commit.commit.author.date).toLocaleDateString('ko-KR') : null,
+        lastCommitMsg: commit ? commit.commit.message.split('\n')[0] : null,
+        license: r.license ? r.license.spdx_id : null,
+        url: r.html_url
+      };
+    } catch (e) {
+      return { name: repo, error: true };
+    }
+  };
+
+  loadCustomRepoStats = async (rows) => {
+    const results = await Promise.all((rows || []).map(async (c) => {
+      const parsed = this.parseOwnerRepo(c.url);
+      if (!parsed) return { name: c.name, error: true };
+      const stats = await this.fetchRepoStats(parsed.owner, parsed.repo);
+      return { ...stats, customName: c.name };
+    }));
+    this.setState({ customRepoStats: results });
+  };
+
+  openAddRepo = () => this.setState({ showAddRepo: true, addRepoErr: '' });
+  closeAddRepo = () => this.setState({ showAddRepo: false, addRepoErr: '' });
+
+  submitAddRepo = async () => {
+    const title = this.titleRef.current ? this.titleRef.current.value.trim() : '';
+    const url = this.urlRef.current ? this.urlRef.current.value.trim() : '';
+    const desc = this.descRef.current ? this.descRef.current.value.trim() : '';
+    if (!title || !url) {
+      this.setState({ addRepoErr: 'Title과 GitHub URL을 입력해주세요.' });
+      return;
+    }
+    const row = { name: title, url, description: desc, created_at: new Date().toISOString() };
+    const { data, error } = await this.sb.from('custom_repos').insert(row).select().single();
+    if (error) {
+      this.setState({ addRepoErr: '추가 실패: ' + error.message });
+      return;
+    }
+    this.setState({ customRepos: [...(this.state.customRepos || []), data], showAddRepo: false, addRepoErr: '' });
+    if (this.titleRef.current) this.titleRef.current.value = '';
+    if (this.urlRef.current) this.urlRef.current.value = '';
+    if (this.descRef.current) this.descRef.current.value = '';
+    const parsed = this.parseOwnerRepo(url);
+    if (parsed) {
+      const stats = await this.fetchRepoStats(parsed.owner, parsed.repo);
+      this.setState({ customRepoStats: [...(this.state.customRepoStats || []), { ...stats, customName: title }] });
+    }
+  };
+
+  loadRepoStats = async () => {
+    const repoNames = ['io-bench','nbdkit-plugin','Aurora_AD','Aurora_DA','Aurora_Dataloader','spdk','DAOS-core','.github'];
+    const results = await Promise.all(repoNames.map(async (name) => {
+      try {
+        const [r, commitsRes, branches, tags, langs] = await Promise.all([
+          fetch('https://api.github.com/repos/Adv-FileSystem/' + name).then(r => r.ok ? r.json() : null),
+          fetch('https://api.github.com/repos/Adv-FileSystem/' + name + '/commits?per_page=1'),
+          fetch('https://api.github.com/repos/Adv-FileSystem/' + name + '/branches?per_page=100').then(r => r.ok ? r.json() : null),
+          fetch('https://api.github.com/repos/Adv-FileSystem/' + name + '/tags?per_page=100').then(r => r.ok ? r.json() : null),
+          fetch('https://api.github.com/repos/Adv-FileSystem/' + name + '/languages').then(r => r.ok ? r.json() : null)
+        ]);
+        if (!r) return { name, error: true };
+        const c = commitsRes.ok ? await commitsRes.json() : null;
+        const commit = Array.isArray(c) && c[0];
+        let commitCount = Array.isArray(c) ? c.length : 0;
+        const link = commitsRes.headers.get('Link');
+        if (link) {
+          const match = link.match(/&page=(\d+)>; rel="last"/);
+          if (match) commitCount = parseInt(match[1]);
+        }
+        return {
+          name,
+          stars: r.stargazers_count,
+          forks: r.forks_count,
+          openIssues: r.open_issues_count,
+          commitCount,
+          branchCount: Array.isArray(branches) ? branches.length : 0,
+          tagCount: Array.isArray(tags) ? tags.length : 0,
+          languages: langs && typeof langs === 'object' ? langs : {},
+          lastCommitDate: commit ? new Date(commit.commit.author.date).toLocaleDateString('ko-KR') : null,
+          lastCommitMsg: commit ? commit.commit.message.split('\n')[0] : null,
+          license: r.license ? r.license.spdx_id : null,
+          url: r.html_url
+        };
+      } catch (e) {
+        return { name, error: true };
+      }
+    }));
+    this.setState({ repoStats: results, statsLoaded: true });
+  };
+
+  stopClick = (e) => e.stopPropagation();
+  onPwKeyDown = (e) => { if (e.key === 'Enter') this.doLogin(); };
+  openLogin = () => this.setState({ showLogin: true, err: '' });
+  closeLogin = () => this.setState({ showLogin: false, err: '' });
+  logout = () => this.setState({ isAdmin: false });
+
+  saveAll = async () => {
+    const { error } = await this.shared.saveSections(this.sb, this.sectionIds);
+    if (!error) {
+      this.setState({ savedMsg: true });
+      clearTimeout(this._savedTimer);
+      this._savedTimer = setTimeout(() => this.setState({ savedMsg: false }), 1500);
+    } else {
+      this.setState({ err: '저장 실패: ' + error.message });
+    }
+  };
+
+  doLogin = async () => {
+    const id = this.idRef.current ? this.idRef.current.value : '';
+    const pw = this.pwRef.current ? this.pwRef.current.value : '';
+    const ok = await this.shared.checkLogin(this.sb, id, pw);
+    if (!ok) { this.setState({ err: '아이디 또는 비밀번호가 올바르지 않습니다.' }); return; }
+    this.setState({ isAdmin: true, showLogin: false, err: '' });
+  };
+
+  renderVals() {
+    const baseRepos = [
+      { name: 'io-bench', category: 'Benchmark', desc: 'PyTorch·TensorFlow 전처리 파이프라인에서 DFUSE와 POSIX 파일시스템의 I/O 성능을 비교하고, perf로 memcpy·콜스택(플레임그래프) 오버헤드를 분석하는 벤치마크 툴킷입니다.', lang: 'Python', stars: 6, forks: 6, url: 'https://github.com/Adv-FileSystem/io-bench', forkOf: null },
+      { name: 'nbdkit-plugin', category: 'Prototype', desc: 'nbdkit Python 플러그인으로 만든 In-Storage Computing 프로토타입. 백엔드 파일에 압축 청크를 저장하고, QEMU의 NBD(Network Block Device) 계층을 통해 읽기/쓰기 인터페이스로 노출합니다.', lang: 'Python', stars: 6, forks: 5, url: 'https://github.com/Adv-FileSystem/nbdkit-plugin', forkOf: null },
+      { name: 'Aurora_AD', category: 'AuroraFS', desc: 'AuroraFS에서 시스템 이상 탐지(Anomaly Detection)를 위한 알고리즘 개발 프로젝트입니다.', lang: null, stars: 6, forks: 5, url: 'https://github.com/Adv-FileSystem/Aurora_AD', forkOf: null },
+      { name: 'Aurora_DA', category: 'AuroraFS', desc: 'AuroraFS에서 파일시스템 데이터 증강(Data Augmentation)을 위한 모델 개발 프로젝트입니다.', lang: null, stars: 6, forks: 6, url: 'https://github.com/Adv-FileSystem/Aurora_DA', forkOf: null },
+      { name: 'Aurora_Dataloader', category: 'AuroraFS', desc: 'AuroraFS에서 사용되는 eBPF 데이터 로더 개발 프로젝트입니다.', lang: null, stars: 6, forks: 5, url: 'https://github.com/Adv-FileSystem/Aurora_Dataloader', forkOf: null },
+      { name: 'spdk', category: 'Reference stack', desc: '사용자 공간에서 폴링 방식으로 동작해 커널 인터럽트·컨텍스트 스위치 오버헤드를 없앤 고성능 스토리지 개발 키트(Storage Performance Development Kit). NVMe 드라이버와 스토리지 프로토콜 타겟을 포함하며 참조 스토리지 계층으로 활용합니다.', lang: 'C', stars: 0, forks: 1379, url: 'https://github.com/Adv-FileSystem/spdk', forkOf: 'spdk/spdk' },
+      { name: 'DAOS-core', category: 'Reference stack', desc: 'DAOS(Distributed Asynchronous Object Storage) — Storage Class Memory와 NVMe 기반 대규모 분산 오브젝트 스토어. 클라이언트 라이브러리, 스토리지 엔진, 컨트롤 플레인을 포함하며 참조 구현으로 사용합니다.', lang: 'C', stars: 0, forks: 361, url: 'https://github.com/Adv-FileSystem/DAOS-core', forkOf: 'daos-stack/daos' },
+      { name: '.github', category: 'Org', desc: 'Adv-FileSystem 조직의 프로필 및 커뮤니티 템플릿 저장소입니다.', lang: null, stars: 0, forks: 0, url: 'https://github.com/Adv-FileSystem/.github', forkOf: null }
+    ];
+    const statsByName = {};
+    (this.state.repoStats || []).forEach(rs => { statsByName[rs.name] = rs; });
+    const orgRepos = baseRepos.map(r => {
+      const live = statsByName[r.name];
+      return live && !live.error ? { ...r, stars: live.stars, forks: live.forks, openIssues: live.openIssues, lastCommitDate: live.lastCommitDate, lastCommitMsg: live.lastCommitMsg } : r;
+    });
+    const customStatsByName = {};
+    (this.state.customRepoStats || []).forEach(cs => { customStatsByName[cs.customName] = cs; });
+    const customRepos = (this.state.customRepos || []).map(c => {
+      const live = customStatsByName[c.name];
+      const topLangEntry = live && !live.error && live.languages ? Object.entries(live.languages).sort((a, b) => b[1] - a[1])[0] : null;
+      return {
+        name: c.name, category: 'Community', desc: c.description || '',
+        lang: topLangEntry ? topLangEntry[0] : null,
+        stars: live && !live.error ? (live.stars || 0) : 0,
+        forks: live && !live.error ? (live.forks || 0) : 0,
+        openIssues: live && !live.error ? (live.openIssues || 0) : 0,
+        lastCommitDate: live && !live.error ? live.lastCommitDate : null,
+        url: c.url, forkOf: null
+      };
+    });
+    const repos = [...orgRepos, ...customRepos];
+    const totalStars = repos.reduce((s, r) => s + (r.stars || 0), 0);
+    const totalForks = repos.reduce((s, r) => s + (r.forks || 0), 0);
+    const totalIssues = repos.reduce((s, r) => s + (r.openIssues || 0), 0);
+    const stats = [...(this.state.repoStats || []), ...(this.state.customRepoStats || [])];
+    const totalBranches = stats.reduce((s, r) => s + (r.branchCount || 0), 0);
+    const totalTags = stats.reduce((s, r) => s + (r.tagCount || 0), 0);
+    const totalCommits = stats.reduce((s, r) => s + (r.commitCount || 0), 0);
+    const licenseCounts = {};
+    stats.forEach(r => { if (r.license) licenseCounts[r.license] = (licenseCounts[r.license] || 0) + 1; });
+    const licenseEntries = Object.entries(licenseCounts).sort((a, b) => b[1] - a[1]);
+    const licenseLabel = licenseEntries.length === 0 ? '—' : licenseEntries.length === 1 ? licenseEntries[0][0] : licenseEntries[0][0] + ' 외';
+    const langBytes = {};
+    stats.forEach(r => {
+      Object.entries(r.languages || {}).forEach(([lang, bytes]) => {
+        langBytes[lang] = (langBytes[lang] || 0) + bytes;
+      });
+    });
+    const totalBytes = Object.values(langBytes).reduce((s, b) => s + b, 0);
+    const languageLine = totalBytes > 0
+      ? Object.entries(langBytes).sort((a, b) => b[1] - a[1]).slice(0, 3)
+          .map(([lang, bytes]) => lang + ' ' + (bytes / totalBytes * 100).toFixed(1) + '%').join(' · ')
+      : '';
+    const langColors = ['#06B6D4', '#8B5CF6', '#F59E0B', '#10B981', '#EC4899'];
+    const donutR = 60;
+    const donutC = 2 * Math.PI * donutR;
+    let cumulative = 0;
+    const langBars = totalBytes > 0
+      ? Object.entries(langBytes).sort((a, b) => b[1] - a[1]).slice(0, 5)
+          .map(([lang, bytes], i) => {
+            const pct = bytes / totalBytes * 100;
+            const arcLen = pct / 100 * donutC;
+            const dashoffset = -cumulative;
+            cumulative += arcLen;
+            return {
+              name: lang, pctLabel: pct.toFixed(1) + '%', color: langColors[i % langColors.length],
+              dasharray: arcLen.toFixed(2) + ' ' + (donutC - arcLen).toFixed(2),
+              dashoffset: dashoffset.toFixed(2)
+            };
+          })
+      : [];
+    const topLang = langBars[0] || null;
+    return {
+      repos,
+      repoCount: repos.length,
+      totalStars,
+      totalForks,
+      totalIssues,
+      totalBranches,
+      totalTags,
+      totalCommits,
+      licenseLabel,
+      languageLine,
+      langBars,
+      topLang,
+      donutR,
+      showAddRepo: this.state.showAddRepo,
+      addRepoErr: this.state.addRepoErr,
+      titleRef: this.titleRef,
+      urlRef: this.urlRef,
+      descRef: this.descRef,
+      openAddRepo: this.openAddRepo,
+      closeAddRepo: this.closeAddRepo,
+      submitAddRepo: this.submitAddRepo,
+      isAdmin: this.state.isAdmin,
+      notAdmin: !this.state.isAdmin,
+      showLogin: this.state.showLogin,
+      err: this.state.err,
+      savedMsg: this.state.savedMsg,
+      saveAll: this.saveAll,
+      idRef: this.idRef,
+      pwRef: this.pwRef,
+      doLogin: this.doLogin,
+      logout: this.logout,
+      openLogin: this.openLogin,
+      closeLogin: this.closeLogin,
+      stopClick: this.stopClick,
+      onPwKeyDown: this.onPwKeyDown
+    };
+  }
+}
+</script>
+</body>
+</html>

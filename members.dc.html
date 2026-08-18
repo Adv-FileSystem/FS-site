@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<template id="__bundler_thumbnail" data-bg-color="#0A0F1E">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0A0F1E"/>
+    <text x="600" y="420" text-anchor="middle" font-family="monospace" font-size="120" font-weight="700" fill="#06B6D4">FS</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./image-slot.js"></script>
+<style>
+body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', sans-serif; overflow-x:hidden; }
+[contenteditable="true"] a { -webkit-user-modify: read-only; user-modify: read-only; cursor: pointer; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]) { outline: 1px dashed #06B6D4; outline-offset: 2px; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]):focus { outline: 2px dashed #06B6D4; }
+</style>
+</helmet>
+
+<div style="min-height:100vh">
+
+<dc-import name="SiteHeader" active="members" is-admin="{{ isAdmin }}" not-admin="{{ notAdmin }}" show-login="{{ showLogin }}" err="{{ err }}" saved-msg="{{ savedMsg }}" id-ref="{{ idRef }}" pw-ref="{{ pwRef }}" do-login="{{ doLogin }}" logout="{{ logout }}" open-login="{{ openLogin }}" close-login="{{ closeLogin }}" stop-click="{{ stopClick }}" on-pw-key-down="{{ onPwKeyDown }}" save-all="{{ saveAll }}" hint-size="100%,64px"></dc-import>
+
+<section id="members" contentEditable="{{ isAdmin }}" style="padding:160px 48px 96px;background:#0A0F1E;min-height:100vh">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#06B6D4;margin-bottom:12px">// Community Members</div>
+    <h2 style="font-size:clamp(24px,3vw,40px);font-weight:800;line-height:1.2;letter-spacing:-0.01em;margin:0 0 16px">AuroraFS 프로젝트 컨소시엄</h2>
+    <p style="font-size:16px;color:#94A3B8;max-width:680px;line-height:1.8;margin:0 0 56px">본 과제에 참여하는 기관 및 기업 목록입니다.</p>
+
+    <div style="display:flex;justify-content:center;margin-bottom:16px">
+      <div style="padding:32px 24px;background:#0F172A;border:1px solid rgba(37,99,235,0.4);border-radius:8px;text-align:center;width:100%;max-width:280px">
+        <div style="width:140px;height:64px;margin:0 auto 16px;background:#fff;border-radius:8px;padding:8px;box-sizing:border-box">
+          <image-slot id="logo-keti" shape="rect" fit="contain" src="uploads/한국전자기술연구원.svg" placeholder="로고"></image-slot>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#2563EB;margin-bottom:12px">주 관 기 관</div>
+        <div style="font-size:17px;font-weight:700;color:#F1F5F9">한국전자기술연구원</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <div style="padding:32px 24px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="width:140px;height:64px;margin:0 auto 16px;background:#fff;border-radius:8px;padding:8px;box-sizing:border-box">
+          <image-slot id="logo-glusys" shape="rect" fit="contain" src="uploads/글루시스.jpg" placeholder="로고"></image-slot>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#94A3B8;margin-bottom:12px">공 동 기 관</div>
+        <div style="font-size:17px;font-weight:700;color:#F1F5F9">(주)글루시스</div>
+      </div>
+      <div style="padding:32px 24px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="width:140px;height:64px;margin:0 auto 16px;background:#fff;border-radius:8px;padding:8px;box-sizing:border-box">
+          <image-slot id="logo-mobigen" shape="rect" fit="contain" src="uploads/모비젠.png" placeholder="로고"></image-slot>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#94A3B8;margin-bottom:12px">공 동 기 관</div>
+        <div style="font-size:17px;font-weight:700;color:#F1F5F9">(주)모비젠</div>
+      </div>
+      <div style="padding:32px 24px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="width:140px;height:64px;margin:0 auto 16px;background:#fff;border-radius:8px;padding:8px;box-sizing:border-box">
+          <image-slot id="logo-moadata" shape="rect" fit="contain" src="uploads/모아데이타.jpg" placeholder="로고"></image-slot>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#94A3B8;margin-bottom:12px">공 동 기 관</div>
+        <div style="font-size:17px;font-weight:700;color:#F1F5F9">(주)모아데이타</div>
+      </div>
+      <div style="padding:32px 24px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="width:140px;height:64px;margin:0 auto 16px;background:#fff;border-radius:8px;padding:8px;box-sizing:border-box">
+          <image-slot id="logo-etri" shape="rect" fit="contain" src="uploads/한국전자통신연구원.svg" placeholder="로고"></image-slot>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#94A3B8;margin-bottom:12px">공 동 기 관</div>
+        <div style="font-size:17px;font-weight:700;color:#F1F5F9">한국전자통신연구원</div>
+      </div>
+      <div style="padding:32px 24px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="width:140px;height:64px;margin:0 auto 16px;background:#fff;border-radius:8px;padding:8px;box-sizing:border-box">
+          <image-slot id="logo-kisti" shape="rect" fit="contain" src="uploads/한국과학기술정보연구원.svg" placeholder="로고"></image-slot>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#94A3B8;margin-bottom:12px">공 동 기 관</div>
+        <div style="font-size:17px;font-weight:700;color:#F1F5F9">한국과학기술정보연구원</div>
+      </div>
+      <div style="padding:32px 24px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="width:140px;height:64px;margin:0 auto 16px;background:#fff;border-radius:8px;padding:8px;box-sizing:border-box">
+          <image-slot id="logo-postech" shape="rect" fit="contain" src="uploads/포항공과대학교산학협력단.webp" placeholder="로고"></image-slot>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#94A3B8;margin-bottom:12px">공 동 기 관</div>
+        <div style="font-size:17px;font-weight:700;color:#F1F5F9">포항공과대학교 산학협력단</div>
+      </div>
+      <div style="padding:32px 24px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="width:140px;height:64px;margin:0 auto 16px;background:#fff;border-radius:8px;padding:8px;box-sizing:border-box">
+          <image-slot id="logo-tta" shape="rect" fit="contain" src="uploads/한국정보통신기술협회.svg" placeholder="로고"></image-slot>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#94A3B8;margin-bottom:12px">공 동 기 관</div>
+        <div style="font-size:17px;font-weight:700;color:#F1F5F9">한국정보통신기술협회</div>
+      </div>
+      <div style="padding:32px 24px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+        <div style="width:140px;height:64px;margin:0 auto 16px;background:#fff;border-radius:8px;padding:8px;box-sizing:border-box">
+          <image-slot id="logo-kica" shape="rect" fit="contain" src="uploads/한국클라우드컴퓨팅연구조합.jpg" placeholder="로고"></image-slot>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#94A3B8;margin-bottom:12px">공 동 기 관</div>
+        <div style="font-size:17px;font-weight:700;color:#F1F5F9">한국클라우드컴퓨팅연구조합</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" is-admin="{{ isAdmin }}" hint-size="100%,220px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { isAdmin: false, showLogin: false, err: '' };
+  idRef = React.createRef();
+  pwRef = React.createRef();
+  sectionIds = ['members', 'footer'];
+
+  async componentDidMount() {
+    const shared = await import('./site-shared.js');
+    this.shared = shared;
+    this.sb = shared.createClient();
+    await shared.loadContent(this.sb, this.sectionIds);
+  }
+
+  stopClick = (e) => e.stopPropagation();
+  onPwKeyDown = (e) => { if (e.key === 'Enter') this.doLogin(); };
+  openLogin = () => this.setState({ showLogin: true, err: '' });
+  closeLogin = () => this.setState({ showLogin: false, err: '' });
+  logout = () => this.setState({ isAdmin: false });
+
+  saveAll = async () => {
+    const { error } = await this.shared.saveSections(this.sb, this.sectionIds);
+    if (!error) {
+      this.setState({ savedMsg: true });
+      clearTimeout(this._savedTimer);
+      this._savedTimer = setTimeout(() => this.setState({ savedMsg: false }), 1500);
+    } else {
+      this.setState({ err: '저장 실패: ' + error.message });
+    }
+  };
+
+  doLogin = async () => {
+    const id = this.idRef.current ? this.idRef.current.value : '';
+    const pw = this.pwRef.current ? this.pwRef.current.value : '';
+    const ok = await this.shared.checkLogin(this.sb, id, pw);
+    if (!ok) { this.setState({ err: '아이디 또는 비밀번호가 올바르지 않습니다.' }); return; }
+    this.setState({ isAdmin: true, showLogin: false, err: '' });
+  };
+
+  renderVals() {
+    return {
+      isAdmin: this.state.isAdmin,
+      notAdmin: !this.state.isAdmin,
+      showLogin: this.state.showLogin,
+      err: this.state.err,
+      savedMsg: this.state.savedMsg,
+      saveAll: this.saveAll,
+      idRef: this.idRef,
+      pwRef: this.pwRef,
+      doLogin: this.doLogin,
+      logout: this.logout,
+      openLogin: this.openLogin,
+      closeLogin: this.closeLogin,
+      stopClick: this.stopClick,
+      onPwKeyDown: this.onPwKeyDown
+    };
+  }
+}
+</script>
+</body>
+</html>

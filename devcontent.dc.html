@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<template id="__bundler_thumbnail" data-bg-color="#0A0F1E">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0A0F1E"/>
+    <text x="600" y="420" text-anchor="middle" font-family="monospace" font-size="120" font-weight="700" fill="#06B6D4">FS</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', sans-serif; overflow-x:hidden; }
+[contenteditable="true"] a { -webkit-user-modify: read-only; user-modify: read-only; cursor: pointer; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]) { outline: 1px dashed #06B6D4; outline-offset: 2px; }
+[contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]):focus { outline: 2px dashed #06B6D4; }
+</style>
+</helmet>
+
+<div style="min-height:100vh">
+
+<dc-import name="SiteHeader" active="devcontent" is-admin="{{ isAdmin }}" not-admin="{{ notAdmin }}" show-login="{{ showLogin }}" err="{{ err }}" saved-msg="{{ savedMsg }}" id-ref="{{ idRef }}" pw-ref="{{ pwRef }}" do-login="{{ doLogin }}" logout="{{ logout }}" open-login="{{ openLogin }}" close-login="{{ closeLogin }}" stop-click="{{ stopClick }}" on-pw-key-down="{{ onPwKeyDown }}" save-all="{{ saveAll }}" hint-size="100%,64px"></dc-import>
+
+<section id="devcontent" contentEditable="{{ isAdmin }}" style="padding:160px 48px 96px;background:#0A0F1E">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#06B6D4;margin-bottom:12px">// Development Scope</div>
+    <h2 style="font-size:clamp(24px,3vw,40px);font-weight:800;line-height:1.2;letter-spacing:-0.01em;margin:0 0 16px">기관별 주요 개발내용</h2>
+    <p style="font-size:16px;color:#94A3B8;max-width:680px;line-height:1.8;margin:0 0 56px">GitHub 조직에 공개된 레포지토리를 기준으로 정리한 개발 파트입니다. 기관명·역할 배정은 연구개발계획서 확인 후 각 카드의 상단 라벨에 반영합니다.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <div style="padding:32px 28px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#F59E0B;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);padding:4px 10px;border-radius:2px">한국전자기술연구원</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;letter-spacing:0.1em">· PART 01</span>
+        </div>
+        <h3 style="font-size:17px;font-weight:700;margin:0 0 10px;color:#F1F5F9">병렬 파일시스템 코어 개발</h3>
+        <p style="font-size:14px;color:#94A3B8;line-height:1.8;margin:0 0 18px">DAOS 스토리지 스택(클라이언트 라이브러리·스토리지 엔진·컨트롤 플레인)을 기반으로 AuroraFS 코어를 구성합니다. AI 워크로드 특성에 맞춘 메타데이터 관리, 네임스페이스, POSIX 호환 계층(dfuse) 확장을 담당합니다.</p>
+        <a href="https://github.com/Adv-FileSystem/DAOS-core" target="_blank" rel="noopener" style="display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;color:#2563EB;background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);padding:5px 12px;border-radius:2px;text-decoration:none" style-hover="text-decoration:underline">DAOS-core</a>
+      </div>
+      <div style="padding:32px 28px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#F59E0B;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);padding:4px 10px;border-radius:2px">한국전자기술연구원</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;letter-spacing:0.1em">· PART 02</span>
+        </div>
+        <h3 style="font-size:17px;font-weight:700;margin:0 0 10px;color:#F1F5F9">유저스페이스 고속 I/O 스택</h3>
+        <p style="font-size:14px;color:#94A3B8;line-height:1.8;margin:0 0 18px">SPDK 기반 커널 우회 I/O 경로를 확보하고 NVMe·NVMe-oF 전송 계층을 튜닝합니다. 폴링 모드 드라이버와 AuroraFS 스토리지 엔진 간 연동 인터페이스를 개발합니다.</p>
+        <a href="https://github.com/Adv-FileSystem/spdk" target="_blank" rel="noopener" style="display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;color:#2563EB;background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);padding:5px 12px;border-radius:2px;text-decoration:none" style-hover="text-decoration:underline">spdk</a>
+      </div>
+      <div style="padding:32px 28px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#F59E0B;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);padding:4px 10px;border-radius:2px">한국전자기술연구원</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;letter-spacing:0.1em">· PART 03</span>
+        </div>
+        <h3 style="font-size:17px;font-weight:700;margin:0 0 10px;color:#F1F5F9">eBPF 데이터로더 개발</h3>
+        <p style="font-size:14px;color:#94A3B8;line-height:1.8;margin:0 0 18px">AuroraFS에서 사용되는 eBPF 기반 데이터 로더를 개발합니다. 커널 공간에서 데이터 접근 패턴을 관측·제어하여 AI 프레임워크로의 데이터 공급 경로를 최적화합니다.</p>
+        <a href="https://github.com/Adv-FileSystem/Aurora_Dataloader" target="_blank" rel="noopener" style="display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;color:#2563EB;background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);padding:5px 12px;border-radius:2px;text-decoration:none" style-hover="text-decoration:underline">Aurora_Dataloader</a>
+      </div>
+      <div style="padding:32px 28px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#F59E0B;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);padding:4px 10px;border-radius:2px">한국전자기술연구원</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;letter-spacing:0.1em">· PART 04</span>
+        </div>
+        <h3 style="font-size:17px;font-weight:700;margin:0 0 10px;color:#F1F5F9">In-Storage Computing 프로토타입</h3>
+        <p style="font-size:14px;color:#94A3B8;line-height:1.8;margin:0 0 18px">nbdkit Python 플러그인 기반으로 NBD 계층 위의 경량 ISC 읽기/쓰기 프로토타입을 구현합니다. 쓰기 데이터의 zlib 청크 압축, 청크 메타데이터 인덱싱, QEMU·nbd-client 연동 검증을 수행합니다.</p>
+        <a href="https://github.com/Adv-FileSystem/nbdkit-plugin" target="_blank" rel="noopener" style="display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;color:#2563EB;background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);padding:5px 12px;border-radius:2px;text-decoration:none" style-hover="text-decoration:underline">nbdkit-plugin</a>
+      </div>
+      <div style="padding:32px 28px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#F59E0B;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);padding:4px 10px;border-radius:2px">한국전자기술연구원</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;letter-spacing:0.1em">· PART 05</span>
+        </div>
+        <h3 style="font-size:17px;font-weight:700;margin:0 0 10px;color:#F1F5F9">AI 기반 이상탐지 · 데이터 증강</h3>
+        <p style="font-size:14px;color:#94A3B8;line-height:1.8;margin:0 0 18px">AuroraFS 운영 데이터를 학습하여 시스템 이상 징후를 탐지하는 Anomaly Detection 알고리즘과, 파일시스템 데이터 증강(Data Augmentation) 모델을 개발합니다.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a href="https://github.com/Adv-FileSystem/Aurora_AD" target="_blank" rel="noopener" style="display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;color:#2563EB;background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);padding:5px 12px;border-radius:2px;text-decoration:none" style-hover="text-decoration:underline">Aurora_AD</a>
+          <a href="https://github.com/Adv-FileSystem/Aurora_DA" target="_blank" rel="noopener" style="display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;color:#2563EB;background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);padding:5px 12px;border-radius:2px;text-decoration:none" style-hover="text-decoration:underline">Aurora_DA</a>
+        </div>
+      </div>
+      <div style="padding:32px 28px;background:#0F172A;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#F59E0B;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);padding:4px 10px;border-radius:2px">한국전자기술연구원</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;letter-spacing:0.1em">· PART 06</span>
+        </div>
+        <h3 style="font-size:17px;font-weight:700;margin:0 0 10px;color:#F1F5F9">성능 벤치마크 및 검증 체계</h3>
+        <p style="font-size:14px;color:#94A3B8;line-height:1.8;margin:0 0 18px">PyTorch·TensorFlow 워크로드 하에서 DFUSE와 POSIX 파일시스템의 I/O 성능을 비교하고, perf 콜스택·FlameGraph로 memcpy 및 FUSE 경계 복사 오버헤드를 정량 분석하는 재현 가능한 벤치마크 키트를 구축합니다.</p>
+        <a href="https://github.com/Adv-FileSystem/io-bench" target="_blank" rel="noopener" style="display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;color:#2563EB;background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);padding:5px 12px;border-radius:2px;text-decoration:none" style-hover="text-decoration:underline">io-bench</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" is-admin="{{ isAdmin }}" hint-size="100%,220px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { isAdmin: false, showLogin: false, err: '' };
+  idRef = React.createRef();
+  pwRef = React.createRef();
+  sectionIds = ['devcontent', 'footer'];
+
+  async componentDidMount() {
+    const shared = await import('./site-shared.js');
+    this.shared = shared;
+    this.sb = shared.createClient();
+    await shared.loadContent(this.sb, this.sectionIds);
+  }
+
+  stopClick = (e) => e.stopPropagation();
+  onPwKeyDown = (e) => { if (e.key === 'Enter') this.doLogin(); };
+  openLogin = () => this.setState({ showLogin: true, err: '' });
+  closeLogin = () => this.setState({ showLogin: false, err: '' });
+  logout = () => this.setState({ isAdmin: false });
+
+  saveAll = async () => {
+    const { error } = await this.shared.saveSections(this.sb, this.sectionIds);
+    if (!error) {
+      this.setState({ savedMsg: true });
+      clearTimeout(this._savedTimer);
+      this._savedTimer = setTimeout(() => this.setState({ savedMsg: false }), 1500);
+    } else {
+      this.setState({ err: '저장 실패: ' + error.message });
+    }
+  };
+
+  doLogin = async () => {
+    const id = this.idRef.current ? this.idRef.current.value : '';
+    const pw = this.pwRef.current ? this.pwRef.current.value : '';
+    const ok = await this.shared.checkLogin(this.sb, id, pw);
+    if (!ok) { this.setState({ err: '아이디 또는 비밀번호가 올바르지 않습니다.' }); return; }
+    this.setState({ isAdmin: true, showLogin: false, err: '' });
+  };
+
+  renderVals() {
+    return {
+      isAdmin: this.state.isAdmin,
+      notAdmin: !this.state.isAdmin,
+      showLogin: this.state.showLogin,
+      err: this.state.err,
+      savedMsg: this.state.savedMsg,
+      saveAll: this.saveAll,
+      idRef: this.idRef,
+      pwRef: this.pwRef,
+      doLogin: this.doLogin,
+      logout: this.logout,
+      openLogin: this.openLogin,
+      closeLogin: this.closeLogin,
+      stopClick: this.stopClick,
+      onPwKeyDown: this.onPwKeyDown
+    };
+  }
+}
+</script>
+</body>
+</html>
