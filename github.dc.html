@@ -399,9 +399,11 @@ class Component extends DCLogic {
     const licenseLabel = licenseEntries.length === 0 ? '—' : licenseEntries.length === 1 ? licenseEntries[0][0] : licenseEntries[0][0] + ' 외';
     const langBytes = {};
     stats.forEach(r => {
-      Object.entries(r.languages || {}).forEach(([lang, bytes]) => {
-        langBytes[lang] = (langBytes[lang] || 0) + bytes;
-      });
+      if (r.languages && typeof r.languages === 'object' && Object.keys(r.languages).length > 0) {
+        Object.entries(r.languages).forEach(([lang, bytes]) => {
+          langBytes[lang] = (langBytes[lang] || 0) + bytes;
+        });
+      }
     });
     const totalBytes = Object.values(langBytes).reduce((s, b) => s + b, 0);
     const languageLine = totalBytes > 0
