@@ -232,8 +232,12 @@ class Component extends DCLogic {
       let commitCount = 0;
       const link = commitsRes.headers.get('Link');
       if (link) {
-        const lastMatch = link.match(/[?&]page=(\d+)[^>]*>;\s*rel="last"/);
-        commitCount = lastMatch ? parseInt(lastMatch[1], 10) : (Array.isArray(c) ? c.length : 0);
+        const lastMatch = link.match(/page=(\d+)>;\s*rel="last"/);
+        if (lastMatch) {
+          commitCount = parseInt(lastMatch[1], 10) * 1;
+        } else {
+          commitCount = Array.isArray(c) ? c.length : 0;
+        }
       } else {
         commitCount = Array.isArray(c) ? c.length : 0;
       }
@@ -320,8 +324,12 @@ class Component extends DCLogic {
         let commitCount = 0;
         const link = commitsRes.headers.get('Link');
         if (link) {
-          const lastMatch = link.match(/[?&]page=(\d+)[^>]*>;\s*rel="last"/);
-          commitCount = lastMatch ? parseInt(lastMatch[1], 10) : (Array.isArray(c) ? c.length : 0);
+          const lastMatch = link.match(/page=(\d+)>;\s*rel="last"/);
+          if (lastMatch) {
+            commitCount = parseInt(lastMatch[1], 10) * 1;
+          } else {
+            commitCount = Array.isArray(c) ? c.length : 0;
+          }
         } else {
           commitCount = Array.isArray(c) ? c.length : 0;
         }
