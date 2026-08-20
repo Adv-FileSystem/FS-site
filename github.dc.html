@@ -217,14 +217,21 @@ class Component extends DCLogic {
         fetch('https://api.github.com/repos/' + owner + '/' + repo + '/tags?per_page=100').then(r => r.ok ? r.json() : null),
         fetch('https://api.github.com/repos/' + owner + '/' + repo + '/languages').then(r => r.ok ? r.json() : null)
       ]);
-      if (!r) return { name: repo, error: true };
+      if (!r) {
+        console.warn(`Failed to fetch repo info [${owner}/${repo}]: repo not found or HTTP error`);
+        return { name: repo, stars: 0, forks: 0, openIssues: 0, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: null };
+      }
+      if (!commitsRes.ok) {
+        console.error(`GitHub API error for [${owner}/${repo}] commits: HTTP ${commitsRes.status}`);
+        return { name: repo, stars: r.stargazers_count, forks: r.forks_count, openIssues: r.open_issues_count, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: r.license ? r.license.spdx_id : null, url: r.html_url, error: null };
+      }
       const c = commitsRes.ok ? await commitsRes.json() : null;
       const commit = Array.isArray(c) && c[0];
       let commitCount = 0;
       const link = commitsRes.headers.get('Link');
       if (link) {
-        const lastMatch = link.match(/page=(\d+)>;\s*rel="last"/);
-        if (lastMatch) commitCount = parseInt(lastMatch[1], 10);
+        const lastMatch = link.match(/[?&]page=(\d+)[^>]*>;\s*rel="last"/);
+        commitCount = lastMatch ? parseInt(lastMatch[1], 10) : (Array.isArray(c) ? c.length : 0);
       } else {
         commitCount = Array.isArray(c) ? c.length : 0;
       }
@@ -240,10 +247,12 @@ class Component extends DCLogic {
         lastCommitDate: commit ? new Date(commit.commit.author.date).toLocaleDateString('ko-KR') : null,
         lastCommitMsg: commit ? commit.commit.message.split('\n')[0] : null,
         license: r.license ? r.license.spdx_id : null,
-        url: r.html_url
+        url: r.html_url,
+        error: null
       };
     } catch (e) {
-      return { name: repo, error: true };
+      console.error(`Exception fetching repo stats [${owner}/${repo}]:`, e.message);
+      return { name: repo, stars: 0, forks: 0, openIssues: 0, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: e.message };
     }
   };
 
@@ -296,14 +305,21 @@ class Component extends DCLogic {
           fetch('https://api.github.com/repos/Adv-FileSystem/' + name + '/tags?per_page=100').then(r => r.ok ? r.json() : null),
           fetch('https://api.github.com/repos/Adv-FileSystem/' + name + '/languages').then(r => r.ok ? r.json() : null)
         ]);
-        if (!r) return { name, error: true };
+        if (!r) {
+          console.warn(`Failed to fetch repo info [Adv-FileSystem/${name}]: repo not found or HTTP error`);
+          return { name, stars: 0, forks: 0, openIssues: 0, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: null };
+        }
+        if (!commitsRes.ok) {
+          console.error(`GitHub API error for [Adv-FileSystem/${name}] commits: HTTP ${commitsRes.status}`);
+          return { name, stars: r.stargazers_count, forks: r.forks_count, openIssues: r.open_issues_count, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: r.license ? r.license.spdx_id : null, url: r.html_url, error: null };
+        }
         const c = commitsRes.ok ? await commitsRes.json() : null;
         const commit = Array.isArray(c) && c[0];
         let commitCount = 0;
         const link = commitsRes.headers.get('Link');
         if (link) {
-          const lastMatch = link.match(/page=(\d+)>;\s*rel="last"/);
-          if (lastMatch) commitCount = parseInt(lastMatch[1], 10);
+          const lastMatch = link.match(/[?&]page=(\d+)[^>]*>;\s*rel="last"/);
+          commitCount = lastMatch ? parseInt(lastMatch[1], 10) : (Array.isArray(c) ? c.length : 0);
         } else {
           commitCount = Array.isArray(c) ? c.length : 0;
         }
@@ -319,10 +335,12 @@ class Component extends DCLogic {
           lastCommitDate: commit ? new Date(commit.commit.author.date).toLocaleDateString('ko-KR') : null,
           lastCommitMsg: commit ? commit.commit.message.split('\n')[0] : null,
           license: r.license ? r.license.spdx_id : null,
-          url: r.html_url
+          url: r.html_url,
+          error: null
         };
       } catch (e) {
-        return { name, error: true };
+        console.error(`Exception fetching repo stats [Adv-FileSystem/${name}]:`, e.message);
+        return { name, stars: 0, forks: 0, openIssues: 0, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: e.message };
       }
     }));
     this.setState({ repoStats: results, statsLoaded: true });
@@ -368,20 +386,20 @@ class Component extends DCLogic {
     (this.state.repoStats || []).forEach(rs => { statsByName[rs.name] = rs; });
     const orgRepos = baseRepos.map(r => {
       const live = statsByName[r.name];
-      return live && !live.error ? { ...r, stars: live.stars, forks: live.forks, openIssues: live.openIssues, lastCommitDate: live.lastCommitDate, lastCommitMsg: live.lastCommitMsg } : r;
+      return live ? { ...r, stars: live.stars, forks: live.forks, openIssues: live.openIssues, lastCommitDate: live.lastCommitDate, lastCommitMsg: live.lastCommitMsg } : r;
     });
     const customStatsByName = {};
     (this.state.customRepoStats || []).forEach(cs => { customStatsByName[cs.customName] = cs; });
     const customRepos = (this.state.customRepos || []).map(c => {
       const live = customStatsByName[c.name];
-      const topLangEntry = live && !live.error && live.languages ? Object.entries(live.languages).sort((a, b) => b[1] - a[1])[0] : null;
+      const topLangEntry = live && live.languages ? Object.entries(live.languages).sort((a, b) => b[1] - a[1])[0] : null;
       return {
         name: c.name, category: 'Community', desc: c.description || '',
         lang: topLangEntry ? topLangEntry[0] : null,
-        stars: live && !live.error ? (live.stars || 0) : 0,
-        forks: live && !live.error ? (live.forks || 0) : 0,
-        openIssues: live && !live.error ? (live.openIssues || 0) : 0,
-        lastCommitDate: live && !live.error ? live.lastCommitDate : null,
+        stars: live ? (live.stars || 0) : 0,
+        forks: live ? (live.forks || 0) : 0,
+        openIssues: live ? (live.openIssues || 0) : 0,
+        lastCommitDate: live ? live.lastCommitDate : null,
         url: c.url, forkOf: null
       };
     });
