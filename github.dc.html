@@ -220,11 +220,13 @@ class Component extends DCLogic {
       if (!r) return { name: repo, error: true };
       const c = commitsRes.ok ? await commitsRes.json() : null;
       const commit = Array.isArray(c) && c[0];
-      let commitCount = Array.isArray(c) ? c.length : 0;
+      let commitCount = 0;
       const link = commitsRes.headers.get('Link');
       if (link) {
-        const match = link.match(/&page=(\d+)>; rel="last"/);
-        if (match) commitCount = parseInt(match[1]);
+        const lastMatch = link.match(/page=(\d+)>;\s*rel="last"/);
+        if (lastMatch) commitCount = parseInt(lastMatch[1], 10);
+      } else {
+        commitCount = Array.isArray(c) ? c.length : 0;
       }
       return {
         name: repo,
@@ -297,11 +299,13 @@ class Component extends DCLogic {
         if (!r) return { name, error: true };
         const c = commitsRes.ok ? await commitsRes.json() : null;
         const commit = Array.isArray(c) && c[0];
-        let commitCount = Array.isArray(c) ? c.length : 0;
+        let commitCount = 0;
         const link = commitsRes.headers.get('Link');
         if (link) {
-          const match = link.match(/&page=(\d+)>; rel="last"/);
-          if (match) commitCount = parseInt(match[1]);
+          const lastMatch = link.match(/page=(\d+)>;\s*rel="last"/);
+          if (lastMatch) commitCount = parseInt(lastMatch[1], 10);
+        } else {
+          commitCount = Array.isArray(c) ? c.length : 0;
         }
         return {
           name,
