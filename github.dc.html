@@ -211,7 +211,7 @@ class Component extends DCLogic {
   fetchRepoStats = async (owner, repo) => {
     try {
       const token = prompt('GitHub Personal Access Token을 입력하세요 (선택사항):');
-      const proxyUrl = 'https://ijnnipukerdhvfjxjc.supabase.co/functions/v1/dynamic-endpoint';
+      const proxyUrl = 'https://ijnminpukerdhvtfykjc.supabase.co/functions/v1/dynamic-endpoint';
       const callProxy = async (endpoint) => {
         const res = await fetch(proxyUrl, {
           method: 'POST',
@@ -299,7 +299,7 @@ class Component extends DCLogic {
 
   loadRepoStats = async () => {
     const repoNames = ['io-bench','nbdkit-plugin','Aurora_AD','Aurora_DA','Aurora_Dataloader','spdk','DAOS-core','.github'];
-    const proxyUrl = 'https://ijnnipukerdhvfjxjc.supabase.co/functions/v1/dynamic-endpoint';
+    const proxyUrl = 'https://ijnminpukerdhvtfykjc.supabase.co/functions/v1/dynamic-endpoint';
     const callProxy = async (endpoint) => {
       const res = await fetch(proxyUrl, {
         method: 'POST',
