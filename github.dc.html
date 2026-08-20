@@ -210,12 +210,14 @@ class Component extends DCLogic {
 
   fetchRepoStats = async (owner, repo) => {
     try {
+      const token = prompt('GitHub Personal Access Token을 입력하세요 (선택사항):');
+      const headers = token ? { 'Authorization': `token ${token}` } : {};
       const [r, commitsRes, branches, tags, langs] = await Promise.all([
-        fetch('https://api.github.com/repos/' + owner + '/' + repo).then(r => r.ok ? r.json() : null),
-        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/commits?per_page=1'),
-        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/branches?per_page=100').then(r => r.ok ? r.json() : null),
-        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/tags?per_page=100').then(r => r.ok ? r.json() : null),
-        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/languages').then(r => r.ok ? r.json() : null)
+        fetch('https://api.github.com/repos/' + owner + '/' + repo, { headers }).then(r => r.ok ? r.json() : null),
+        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/commits?per_page=1', { headers }),
+        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/branches?per_page=100', { headers }).then(r => r.ok ? r.json() : null),
+        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/tags?per_page=100', { headers }).then(r => r.ok ? r.json() : null),
+        fetch('https://api.github.com/repos/' + owner + '/' + repo + '/languages', { headers }).then(r => r.ok ? r.json() : null)
       ]);
       if (!r) {
         console.warn(`Failed to fetch repo info [${owner}/${repo}]: repo not found or HTTP error`);
