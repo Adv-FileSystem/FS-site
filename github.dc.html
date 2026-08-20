@@ -222,7 +222,7 @@ class Component extends DCLogic {
       };
       const [r, commitsRes, branches, tags, langs] = await Promise.all([
         callProxy('/repos/' + owner + '/' + repo),
-        fetch(proxyUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: '/repos/' + owner + '/' + repo + '/commits?per_page=1', token }) }).then(r => r),
+        fetch(proxyUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: '/repos/' + owner + '/' + repo + '/commits?per_page=1', token }) }).then(r => r.ok ? r.json() : null),
         callProxy('/repos/' + owner + '/' + repo + '/branches?per_page=100'),
         callProxy('/repos/' + owner + '/' + repo + '/tags?per_page=100'),
         callProxy('/repos/' + owner + '/' + repo + '/languages')
