@@ -210,34 +210,22 @@ class Component extends DCLogic {
 
   fetchRepoStats = async (owner, repo) => {
     try {
-      const token = prompt('GitHub Personal Access Token을 입력하세요 (선택사항):');
-      const proxyUrl = 'https://ijnminpukerdhvtfykjc.supabase.co/functions/v1/dynamic-endpoint';
-      const callProxy = async (endpoint) => {
-        const res = await fetch(proxyUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ endpoint, token })
-        });
-        return res.ok ? await res.json() : null;
-      };
-      const [r, commitsRes, branches, tags, langs] = await Promise.all([
+      const callProxy = this.ghProxy;
+      const [r, commitsRes, branches, tags, langs, commitCountVal] = await Promise.all([
         callProxy('/repos/' + owner + '/' + repo),
-        fetch(proxyUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: '/repos/' + owner + '/' + repo + '/commits?per_page=1', token }) }).then(r => r.ok ? r.json() : null),
+        callProxy('/repos/' + owner + '/' + repo + '/commits?per_page=1'),
         callProxy('/repos/' + owner + '/' + repo + '/branches?per_page=100'),
         callProxy('/repos/' + owner + '/' + repo + '/tags?per_page=100'),
-        callProxy('/repos/' + owner + '/' + repo + '/languages')
+        callProxy('/repos/' + owner + '/' + repo + '/languages'),
+        this.ghCommitCount(owner, repo)
       ]);
       if (!r) {
         console.warn(`Failed to fetch repo info [${owner}/${repo}]: repo not found or HTTP error`);
-        return { name: repo, stars: 0, forks: 0, openIssues: 0, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: null };
-      }
-      if (!commitsRes) {
-        console.error(`GitHub API error for [${owner}/${repo}] commits`);
-        return { name: repo, stars: r.stargazers_count, forks: r.forks_count, openIssues: r.open_issues_count, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: r.license ? r.license.spdx_id : null, url: r.html_url, error: null };
+        return { name: repo, stars: 0, forks: 0, openIssues: 0, commitCount: null, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: null };
       }
       const c = Array.isArray(commitsRes) ? commitsRes : null;
-      const commit = Array.isArray(c) && c[0];
-      let commitCount = r.commits_count || 0;
+      const commit = c && c[0];
+      const commitCount = commitCountVal;
       return {
         name: repo,
         stars: r.stargazers_count,
@@ -255,7 +243,7 @@ class Component extends DCLogic {
       };
     } catch (e) {
       console.error(`Exception fetching repo stats [${owner}/${repo}]:`, e.message);
-      return { name: repo, stars: 0, forks: 0, openIssues: 0, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: e.message };
+      return { name: repo, stars: 0, forks: 0, openIssues: 0, commitCount: null, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: e.message };
     }
   };
 
@@ -297,37 +285,61 @@ class Component extends DCLogic {
     }
   };
 
-  loadRepoStats = async () => {
-    const repoNames = ['io-bench','nbdkit-plugin','Aurora_AD','Aurora_DA','Aurora_Dataloader','spdk','DAOS-core','.github'];
-    const proxyUrl = 'https://ijnminpukerdhvtfykjc.supabase.co/functions/v1/dynamic-endpoint';
-    const callProxy = async (endpoint) => {
+  ghFetch = async (endpoint) => {
+    const key = this.shared.SUPABASE_KEY;
+    const proxyUrl = this.shared.SUPABASE_URL + '/functions/v1/dynamic-endpoint';
+    try {
       const res = await fetch(proxyUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ endpoint, token: '' })
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+        body: JSON.stringify({ endpoint })
       });
-      return res.ok ? await res.json() : null;
-    };
+      if (!res.ok) {
+        console.error('proxy ' + res.status + ' for ' + endpoint, await res.text().catch(() => ''));
+        return null;
+      }
+      return { data: await res.json(), link: res.headers.get('X-GitHub-Link') || '' };
+    } catch (e) {
+      console.error('proxy fetch failed for ' + endpoint, e.message);
+      return null;
+    }
+  };
+
+  ghProxy = async (endpoint) => {
+    const r = await this.ghFetch(endpoint);
+    return r ? r.data : null;
+  };
+
+  // 기본 브랜치의 총 커밋 수. commits?per_page=1 의 Link 헤더 마지막 페이지 번호가 곧 커밋 수.
+  ghCommitCount = async (owner, repo) => {
+    const r = await this.ghFetch('/repos/' + owner + '/' + repo + '/commits?per_page=1');
+    if (!r) return null;
+    const m = (r.link || '').match(/[?&]page=(\d+)[^>]*>;\s*rel="last"/);
+    if (m) return parseInt(m[1], 10);
+    // Link 헤더가 없으면 총 커밋 수를 알 수 없다 — 틀린 숫자를 보이기보다 null.
+    return null;
+  };
+
+  loadRepoStats = async () => {
+    const repoNames = ['io-bench','nbdkit-plugin','Aurora_AD','Aurora_DA','Aurora_Dataloader','spdk','DAOS-core','.github'];
+    const callProxy = this.ghProxy;
     const results = await Promise.all(repoNames.map(async (name) => {
       try {
-        const [r, commitsRes, branches, tags, langs] = await Promise.all([
+        const [r, commitsRes, branches, tags, langs, commitCountVal] = await Promise.all([
           callProxy('/repos/Adv-FileSystem/' + name),
-          fetch(proxyUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: '/repos/Adv-FileSystem/' + name + '/commits?per_page=1', token: '' }) }).then(r => r),
+          callProxy('/repos/Adv-FileSystem/' + name + '/commits?per_page=1'),
           callProxy('/repos/Adv-FileSystem/' + name + '/branches?per_page=100'),
           callProxy('/repos/Adv-FileSystem/' + name + '/tags?per_page=100'),
-          callProxy('/repos/Adv-FileSystem/' + name + '/languages')
+          callProxy('/repos/Adv-FileSystem/' + name + '/languages'),
+          this.ghCommitCount('Adv-FileSystem', name)
         ]);
         if (!r) {
           console.warn(`Failed to fetch repo info [Adv-FileSystem/${name}]: repo not found or HTTP error`);
-          return { name, stars: 0, forks: 0, openIssues: 0, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: null };
-        }
-        if (!commitsRes) {
-          console.error(`GitHub API error for [Adv-FileSystem/${name}] commits`);
-          return { name, stars: r.stargazers_count, forks: r.forks_count, openIssues: r.open_issues_count, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: r.license ? r.license.spdx_id : null, url: r.html_url, error: null };
+          return { name, stars: 0, forks: 0, openIssues: 0, commitCount: null, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: null };
         }
         const c = Array.isArray(commitsRes) ? commitsRes : null;
-        const commit = Array.isArray(c) && c[0];
-        let commitCount = r.commits_count || 0;
+        const commit = c && c[0];
+        const commitCount = commitCountVal;
         return {
           name,
           stars: r.stargazers_count,
@@ -345,7 +357,7 @@ class Component extends DCLogic {
         };
       } catch (e) {
         console.error(`Exception fetching repo stats [Adv-FileSystem/${name}]:`, e.message);
-        return { name, stars: 0, forks: 0, openIssues: 0, commitCount: 0, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: e.message };
+        return { name, stars: 0, forks: 0, openIssues: 0, commitCount: null, branchCount: 0, tagCount: 0, languages: {}, lastCommitDate: null, lastCommitMsg: null, license: null, url: '', error: e.message };
       }
     }));
     this.setState({ repoStats: results, statsLoaded: true });
@@ -415,7 +427,8 @@ class Component extends DCLogic {
     const stats = [...(this.state.repoStats || []), ...(this.state.customRepoStats || [])];
     const totalBranches = stats.reduce((s, r) => s + (r.branchCount || 0), 0);
     const totalTags = stats.reduce((s, r) => s + (r.tagCount || 0), 0);
-    const totalCommits = stats.reduce((s, r) => s + (r.commitCount || 0), 0);
+    const knownCommits = stats.filter(r => typeof r.commitCount === 'number');
+    const totalCommits = knownCommits.length === 0 ? '—' : knownCommits.reduce((s, r) => s + r.commitCount, 0).toLocaleString('ko-KR');
     const licenseCounts = {};
     stats.forEach(r => { if (r.license) licenseCounts[r.license] = (licenseCounts[r.license] || 0) + 1; });
     const licenseEntries = Object.entries(licenseCounts).sort((a, b) => b[1] - a[1]);
