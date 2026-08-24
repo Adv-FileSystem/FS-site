@@ -60,7 +60,7 @@ body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', 
         <div style="width:44px;height:44px;border-radius:10px;background:rgba(16,185,129,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="21" y2="12"/><circle cx="12" cy="12" r="4"/></svg>
         </div>
-        <div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;color:#F1F5F9;line-height:1">{{ totalCommits }}</div><div style="font-size:12px;color:#64748B;margin-top:5px">Commits</div></div>
+        <div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;color:#F1F5F9;line-height:1">{{ totalCommits }}</div><div style="font-size:12px;color:#64748B;margin-top:5px;white-space:nowrap">Commits</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:14px;padding:20px 22px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:10px">
         <div style="width:44px;height:44px;border-radius:10px;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -237,6 +237,7 @@ class Component extends DCLogic {
         languages: langs && typeof langs === 'object' ? langs : {},
         lastCommitDate: commit ? new Date(commit.commit.author.date).toLocaleDateString('ko-KR') : null,
         lastCommitMsg: commit ? commit.commit.message.split('\n')[0] : null,
+        isFork: !!r.fork,
         license: r.license ? r.license.spdx_id : null,
         url: r.html_url,
         error: null
@@ -351,7 +352,8 @@ class Component extends DCLogic {
           languages: langs && typeof langs === 'object' ? langs : {},
           lastCommitDate: commit ? new Date(commit.commit.author.date).toLocaleDateString('ko-KR') : null,
           lastCommitMsg: commit ? commit.commit.message.split('\n')[0] : null,
-          license: r.license ? r.license.spdx_id : null,
+          isFork: !!r.fork,
+        license: r.license ? r.license.spdx_id : null,
           url: r.html_url,
           error: null
         };
@@ -427,7 +429,8 @@ class Component extends DCLogic {
     const stats = [...(this.state.repoStats || []), ...(this.state.customRepoStats || [])];
     const totalBranches = stats.reduce((s, r) => s + (r.branchCount || 0), 0);
     const totalTags = stats.reduce((s, r) => s + (r.tagCount || 0), 0);
-    const knownCommits = stats.filter(r => typeof r.commitCount === 'number');
+    // fork 한 참조 저장소(spdk, DAOS-core)의 상위 프로젝트 커밋은 팀 커밋이 아니므로 제외.
+    const knownCommits = stats.filter(r => typeof r.commitCount === 'number' && !r.isFork);
     const totalCommits = knownCommits.length === 0 ? '—' : knownCommits.reduce((s, r) => s + r.commitCount, 0).toLocaleString('ko-KR');
     const licenseCounts = {};
     stats.forEach(r => { if (r.license) licenseCounts[r.license] = (licenseCounts[r.license] || 0) + 1; });
