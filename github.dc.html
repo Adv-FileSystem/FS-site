@@ -39,6 +39,10 @@ body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', 
     </div>
     <h3 style="font-size:20px;font-weight:800;margin:0 0 20px;color:#F1F5F9">승인 대기 저장소</h3>
 
+    <sc-if value="{{ queueErr }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:18px;padding:14px 18px;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.3);border-radius:6px;font-size:13px;color:#F87171;line-height:1.7">{{ queueErr }}</div>
+    </sc-if>
+
     <sc-if value="{{ noPending }}" hint-placeholder-val="{{ false }}">
       <p style="font-size:14px;color:#64748B;margin:0 0 4px">대기 중인 신청이 없습니다.</p>
     </sc-if>
@@ -240,6 +244,12 @@ body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', 
               <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.12);padding:3px 10px;border-radius:2px;white-space:nowrap">최근 커밋 {{ repo.lastCommitDate }}</span>
             </sc-if>
           </div>
+          <sc-if value="{{ repo.canUnapprove }}" hint-placeholder-val="{{ false }}">
+            <div contentEditable="false" style="display:flex;gap:8px;flex-wrap:wrap;padding-top:18px;border-top:1px solid rgba(148,163,184,0.1)">
+              <button onClick="{{ repo.onUnapprove }}" style="padding:9px 18px;background:transparent;border:1px solid rgba(245,158,11,0.4);border-radius:4px;color:#F59E0B;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap" style-hover="background:rgba(245,158,11,0.08)">승인 전으로 되돌리기</button>
+              <span style="font-size:12px;color:#64748B;align-self:center">되돌리면 이 저장소는 목록에서 숨겨지고 승인 대기 목록으로 이동합니다.</span>
+            </div>
+          </sc-if>
         </div>
       </sc-for>
     </div>
@@ -286,7 +296,7 @@ body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', 
             </div>
             <div>
               <label style="display:block;font-size:13px;font-weight:600;color:#F1F5F9;margin-bottom:8px">담당자 이메일 <span style="color:#EC4899">*</span></label>
-              <input ref="{{ subEmailRef }}" type="email" placeholder="예) hong@example.re.kr" style="width:100%;box-sizing:border-box;padding:12px 14px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.2);border-radius:4px;color:#F1F5F9;font-size:14px" />
+              <input ref="{{ subEmailRef }}" type="text" placeholder="예) hong@example.re.kr" style="width:100%;box-sizing:border-box;padding:12px 14px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.2);border-radius:4px;color:#F1F5F9;font-size:14px" />
             </div>
           </div>
           <sc-if value="{{ subErr }}" hint-placeholder-val="{{ false }}">
@@ -361,8 +371,18 @@ class Component extends DCLogic {
     const patch = { status: status };
     if (status === 'rejected') patch.reject_reason = reason || '';
     if (status === 'pending') patch.reject_reason = null;
-    const { error } = await this.sb.from('custom_repos').update(patch).eq('id', id);
-    if (error) { this.setState({ queueErr: '처리 실패: ' + error.message }); return; }
+    this.setState({ queueErr: '' });
+    const { data, error } = await this.sb.from('custom_repos').update(patch).eq('id', id).select();
+    if (error) {
+      console.error('상태 변경 실패:', error);
+      this.setState({ queueErr: '처리 실패: ' + error.message });
+      return;
+    }
+    // RLS로 update가 막히면 오류 없이 0건이 반영된다.
+    if (!data || data.length === 0) {
+      this.setState({ queueErr: '처리되지 않았습니다. Supabase의 custom_repos 테이블에 update 권한(RLS 정책)이 없을 가능성이 높습니다.' });
+      return;
+    }
     this.setState({ rejectingId: null, queueErr: '' });
     await this.loadCustomRepos();
   };
@@ -385,12 +405,7 @@ class Component extends DCLogic {
     const email = val(this.subEmailRef);
     if (!url) return this.setState({ subErr: '저장소 URL을 입력해주세요.' });
     const parsed = this.parseOwnerRepo(url);
-    if (!parsed) return this.setState({ subErr: 'GitHub 저장소 주소 형식이 아닙니다. https://github.com/조직명/저장소명 형태로 입력해주세요.' });
-    if (!desc) return this.setState({ subErr: '개발 내용 설명을 입력해주세요.' });
-    if (!org) return this.setState({ subErr: '기관명을 입력해주세요.' });
-    if (!contact) return this.setState({ subErr: '담당자 성명을 입력해주세요.' });
-    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return this.setState({ subErr: '담당자 이메일을 올바르게 입력해주세요.' });
-    const name = val(this.subNameRef) || parsed.repo;
+    const name = val(this.subNameRef) || (parsed ? parsed.repo : url);
     const row = {
       name, url, description: desc, org,
       contact_name: contact, contact_email: email,
@@ -572,6 +587,13 @@ class Component extends DCLogic {
   closeLogin = () => this.setState({ showLogin: false, err: '' });
   logout = () => this.setState({ isAdmin: false, rejectingId: null }, () => this.loadCustomRepos());
 
+  // 본문 수정은 contentEditable DOM에 직접 반영되므로, 저장하지 않고 닫으려면
+  // 저장된 내용을 다시 읽어오는 새로고침이 가장 확실하다.
+  discardAndClose = () => {
+    if (!window.confirm('저장하지 않고 닫으면 지금까지 수정한 내용이 모두 사라집니다. 계속하시겠습니까?')) return;
+    window.location.reload();
+  };
+
   saveAll = async () => {
     const { error } = await this.shared.saveSections(this.sb, this.sectionIds);
     if (!error) {
@@ -636,6 +658,8 @@ class Component extends DCLogic {
       const topLangEntry = live && live.languages ? Object.entries(live.languages).sort((a, b) => b[1] - a[1])[0] : null;
       return {
         name: c.name, category: 'Community', desc: c.description || '', org: c.org || null,
+        canUnapprove: !!this.state.isAdmin,
+        onUnapprove: () => this.setRepoStatus(c.id, 'pending'),
         lang: topLangEntry ? topLangEntry[0] : null,
         stars: live ? (live.stars || 0) : 0,
         forks: live ? (live.forks || 0) : 0,
@@ -743,6 +767,7 @@ class Component extends DCLogic {
       pwRef: this.pwRef,
       doLogin: this.doLogin,
       logout: this.logout,
+      discardAndClose: this.discardAndClose,
       openLogin: this.openLogin,
       closeLogin: this.closeLogin,
       stopClick: this.stopClick,

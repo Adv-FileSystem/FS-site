@@ -25,7 +25,7 @@
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#34D399;white-space:nowrap">저장됨 ✓</span>
       </sc-if>
       <button onClick="{{ saveAll }}" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.05em;color:#fff;background:#2563EB;border:none;padding:6px 14px;border-radius:2px;cursor:pointer;white-space:nowrap">저장하기</button>
-      <button onClick="{{ logout }}" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.05em;color:#94A3B8;background:transparent;border:1px solid rgba(148,163,184,0.3);padding:6px 14px;border-radius:2px;cursor:pointer;white-space:nowrap">닫기</button>
+      <button onClick="{{ discardAndClose }}" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.05em;color:#94A3B8;background:transparent;border:1px solid rgba(148,163,184,0.3);padding:6px 14px;border-radius:2px;cursor:pointer;white-space:nowrap" style-hover="border-color:#F87171;color:#F87171">저장하지 않고 닫기</button>
     </sc-if>
     <sc-if value="{{ notAdmin }}" hint-placeholder-val="{{ true }}">
       <button onClick="{{ openLogin }}" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.05em;color:#94A3B8;background:transparent;border:1px solid rgba(148,163,184,0.3);padding:6px 14px;border-radius:2px;cursor:pointer;white-space:nowrap" style-hover="border-color:#06B6D4;color:#06B6D4">관리자 로그인</button>
@@ -52,10 +52,18 @@
 </sc-if>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:64},&quot;active&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;isAdmin&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;boolean&quot;},&quot;notAdmin&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;boolean&quot;},&quot;showLogin&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;boolean&quot;},&quot;err&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;savedMsg&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;boolean&quot;},&quot;idRef&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;pwRef&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;doLogin&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;function&quot;},&quot;logout&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;function&quot;},&quot;openLogin&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;function&quot;},&quot;closeLogin&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;function&quot;},&quot;stopClick&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;function&quot;},&quot;onPwKeyDown&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;function&quot;},&quot;saveAll&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;function&quot;}}">class Component extends DCLogic {
+  // 본문 수정은 contentEditable DOM에 직접 반영되므로, 저장하지 않고 닫으려면
+  // 저장된 내용을 서버에서 다시 읽어오는 새로고침이 가장 확실하다.
+  discardAndClose = () => {
+    if (!window.confirm('저장하지 않고 닫으면 지금까지 수정한 내용이 모두 사라집니다. 계속하시겠습니까?')) return;
+    window.location.reload();
+  };
+
   renderVals() {
     const active = this.props.active;
     const color = (id) => active === id ? '#2563EB' : '#94A3B8';
     return {
+      discardAndClose: this.discardAndClose,
       colorOverview: color('overview'),
       colorGoals: color('goals'),
       colorTech: color('tech'),
