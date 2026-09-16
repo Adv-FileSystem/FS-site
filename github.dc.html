@@ -244,12 +244,10 @@ body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', 
               <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.12);padding:3px 10px;border-radius:2px;white-space:nowrap">최근 커밋 {{ repo.lastCommitDate }}</span>
             </sc-if>
           </div>
-          <sc-if value="{{ repo.canUnapprove }}" hint-placeholder-val="{{ false }}">
-            <div contentEditable="false" style="display:flex;gap:8px;flex-wrap:wrap;padding-top:18px;border-top:1px solid rgba(148,163,184,0.1)">
+            <div contentEditable="false" style="display:{{ repo.unapproveDisplay }};gap:8px;flex-wrap:wrap;padding-top:18px;border-top:1px solid rgba(148,163,184,0.1)">
               <button onClick="{{ repo.onUnapprove }}" style="padding:9px 18px;background:transparent;border:1px solid rgba(245,158,11,0.4);border-radius:4px;color:#F59E0B;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap" style-hover="background:rgba(245,158,11,0.08)">승인 전으로 되돌리기</button>
               <span style="font-size:12px;color:#64748B;align-self:center">되돌리면 이 저장소는 목록에서 숨겨지고 승인 대기 목록으로 이동합니다.</span>
             </div>
-          </sc-if>
         </div>
       </sc-for>
     </div>
@@ -628,7 +626,7 @@ class Component extends DCLogic {
     (this.state.repoStats || []).forEach(rs => { statsByName[rs.name] = rs; });
     const orgRepos = baseRepos.map(r => {
       const live = statsByName[r.name];
-      r = { ...r, org: '한국전자기술연구원' };
+      r = { ...r, org: '한국전자기술연구원', unapproveDisplay: 'none' };
       return live ? { ...r, stars: live.stars, forks: live.forks, openIssues: live.openIssues, lastCommitDate: live.lastCommitDate, lastCommitMsg: live.lastCommitMsg } : r;
     });
     const customStatsById = {};
@@ -658,7 +656,7 @@ class Component extends DCLogic {
       const topLangEntry = live && live.languages ? Object.entries(live.languages).sort((a, b) => b[1] - a[1])[0] : null;
       return {
         name: c.name, category: 'Community', desc: c.description || '', org: c.org || null,
-        canUnapprove: !!this.state.isAdmin,
+        unapproveDisplay: this.state.isAdmin ? 'flex' : 'none',
         onUnapprove: () => this.setRepoStatus(c.id, 'pending'),
         lang: topLangEntry ? topLangEntry[0] : null,
         stars: live ? (live.stars || 0) : 0,
