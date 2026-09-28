@@ -554,7 +554,7 @@ class Component extends DCLogic {
   };
 
   loadRepoStats = async () => {
-    const repoNames = ['io-bench','nbdkit-plugin','Aurora_AD','Aurora_DA','Aurora_Dataloader','spdk','DAOS-core','.github'];
+    const repoNames = ['io-bench','nbdkit-plugin','Aurora_AD','Aurora_DA','Aurora_Dataloader','spdk','DAOS-core'];
     const callProxy = this.ghProxy;
     const results = await Promise.all(repoNames.map(async (name) => {
       try {
@@ -637,8 +637,7 @@ class Component extends DCLogic {
       { name: 'Aurora_DA', category: 'AuroraFS', desc: 'AuroraFS에서 파일시스템 데이터 증강(Data Augmentation)을 위한 모델 개발 프로젝트입니다.', lang: null, stars: 6, forks: 6, url: 'https://github.com/Adv-FileSystem/Aurora_DA', forkOf: null },
       { name: 'Aurora_Dataloader', category: 'AuroraFS', desc: 'AuroraFS에서 사용되는 eBPF 데이터 로더 개발 프로젝트입니다.', lang: null, stars: 6, forks: 5, url: 'https://github.com/Adv-FileSystem/Aurora_Dataloader', forkOf: null },
       { name: 'spdk', category: 'Reference stack', desc: '사용자 공간에서 폴링 방식으로 동작해 커널 인터럽트·컨텍스트 스위치 오버헤드를 없앤 고성능 스토리지 개발 키트(Storage Performance Development Kit). NVMe 드라이버와 스토리지 프로토콜 타겟을 포함하며 참조 스토리지 계층으로 활용합니다.', lang: 'C', stars: 0, forks: 1379, url: 'https://github.com/Adv-FileSystem/spdk', forkOf: 'spdk/spdk' },
-      { name: 'DAOS-core', category: 'Reference stack', desc: 'DAOS(Distributed Asynchronous Object Storage) — Storage Class Memory와 NVMe 기반 대규모 분산 오브젝트 스토어. 클라이언트 라이브러리, 스토리지 엔진, 컨트롤 플레인을 포함하며 참조 구현으로 사용합니다.', lang: 'C', stars: 0, forks: 361, url: 'https://github.com/Adv-FileSystem/DAOS-core', forkOf: 'daos-stack/daos' },
-      { name: '.github', category: 'Org', desc: 'Adv-FileSystem 조직의 프로필 및 커뮤니티 템플릿 저장소입니다.', lang: null, stars: 0, forks: 0, url: 'https://github.com/Adv-FileSystem/.github', forkOf: null }
+      { name: 'DAOS-core', category: 'Reference stack', desc: 'DAOS(Distributed Asynchronous Object Storage) — Storage Class Memory와 NVMe 기반 대규모 분산 오브젝트 스토어. 클라이언트 라이브러리, 스토리지 엔진, 컨트롤 플레인을 포함하며 참조 구현으로 사용합니다.', lang: 'C', stars: 0, forks: 361, url: 'https://github.com/Adv-FileSystem/DAOS-core', forkOf: 'daos-stack/daos' }
     ];
     const statsByName = {};
     (this.state.repoStats || []).forEach(rs => { statsByName[rs.name] = rs; });
@@ -678,7 +677,7 @@ class Component extends DCLogic {
       const live = customStatsById[c.id];
       const topLangEntry = live && live.languages ? Object.entries(live.languages).sort((a, b) => b[1] - a[1])[0] : null;
       return {
-        name: c.name, category: 'Community', desc: c.description || '', org: c.org || null,
+        name: c.name, category: c.category || ({ 'DOGI': 'Prototype', 'lmcache-daos': 'Connector' })[c.name] || 'Community', desc: c.description || '', org: c.org || null,
         unapproveActions: isAdminNow ? [{ onUnapprove: () => this.setRepoStatus(c.id, 'pending') }] : [],
         onUnapprove: () => this.setRepoStatus(c.id, 'pending'),
         lang: topLangEntry ? topLangEntry[0] : null,
