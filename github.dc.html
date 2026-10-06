@@ -242,15 +242,19 @@ body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', 
       <div style="margin-bottom:20px;padding:16px 20px;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.3);border-radius:6px;font-size:13px;color:#F87171">{{ repoLoadErr }}</div>
     </sc-if>
 
-    <div style="display:flex;flex-direction:column;gap:16px">
-      <sc-for list="{{ repos }}" as="repo" hint-placeholder-count="8">
+    <div style="display:flex;flex-direction:column;gap:56px">
+      <sc-for list="{{ orgGroups }}" as="group" hint-placeholder-count="2">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:20px">
+          <h3 style="font-size:20px;font-weight:700;color:#F1F5F9;margin:0">{{ group.org }}</h3>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#64748B">{{ group.countLabel }}</span>
+        </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+      <sc-for list="{{ group.items }}" as="repo" hint-placeholder-count="3">
         <div style="padding:32px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:10px;flex-wrap:wrap">
             <a href="{{ repo.url }}" target="_blank" rel="noopener" style="font-size:18px;font-weight:700;color:#F1F5F9;text-decoration:none" style-hover="color:#06B6D4">{{ repo.name }} ↗</a>
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-              <sc-if value="{{ repo.org }}" hint-placeholder-val="{{ true }}">
-                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:#EC4899;background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.28);padding:4px 10px;border-radius:2px;white-space:nowrap">{{ repo.org }}</span>
-              </sc-if>
               <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#64748B">{{ repo.category }}</span>
             </div>
           </div>
@@ -269,6 +273,9 @@ body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', 
           </div>
 
         </div>
+      </sc-for>
+      </div>
+      </div>
       </sc-for>
     </div>
   </div>
@@ -691,6 +698,14 @@ class Component extends DCLogic {
       };
     });
     const repos = [...orgRepos, ...customRepos];
+    const groupMap = {};
+    const orgGroups = [];
+    repos.forEach(r => {
+      const key = r.org || '기관명 미기재';
+      if (!groupMap[key]) { groupMap[key] = { org: key, items: [] }; orgGroups.push(groupMap[key]); }
+      groupMap[key].items.push(r);
+    });
+    orgGroups.forEach(g => { g.countLabel = '저장소 ' + g.items.length; });
     const totalStars = repos.reduce((s, r) => s + (r.stars || 0), 0);
     const totalForks = repos.reduce((s, r) => s + (r.forks || 0), 0);
     const totalIssues = repos.reduce((s, r) => s + (r.openIssues || 0), 0);
@@ -738,6 +753,7 @@ class Component extends DCLogic {
     const topLang = langBars[0] || null;
     return {
       repos,
+      orgGroups,
       repoCount: repos.length,
       totalStars,
       totalForks,
