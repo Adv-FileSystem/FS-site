@@ -30,11 +30,6 @@ function stripAdminOnly(root) {
 function sanitizeHtml(html) {
   const holder = document.createElement('div');
   holder.innerHTML = html;
-  // 목록에서 뺀 저장소 카드가 예전 스냅샷에 남아 있으면 함께 걷어낸다.
-  holder.querySelectorAll('a[href$="/Adv-FileSystem/.github"]').forEach(a => {
-    const card = a.parentElement && a.parentElement.parentElement;
-    if (card && card !== holder) card.remove();
-  });
   return stripAdminOnly(holder).innerHTML;
 }
 
