@@ -22,6 +22,7 @@ body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', 
 [contenteditable="true"] a { -webkit-user-modify: read-only; user-modify: read-only; cursor: pointer; }
 [contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]) { outline: 1px dashed #06B6D4; outline-offset: 2px; }
 [contenteditable="true"] *:not(:has(*)):not(a):not([style*="JetBrains"]):focus { outline: 2px dashed #06B6D4; }
+@keyframes stat-pulse { 0%, 100% { opacity:0.25; } 50% { opacity:1; } }
 @keyframes cursor-blink { 0%, 50% { opacity:1; } 51%, 100% { opacity:0; } }
 </style>
 </helmet>
@@ -220,21 +221,22 @@ body { margin:0; background:#0A0F1E; color:#F1F5F9; font-family:'Noto Sans KR', 
     </sc-if>
 
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:56px">
-      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center;display:flex;flex-direction:column;justify-content:center">
         <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:#06B6D4">{{ repoCount }}</div>
         <div style="font-size:12px;color:#94A3B8;margin-top:6px">Repositories</div>
       </div>
-      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center;display:flex;flex-direction:column;justify-content:center">
         <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:#06B6D4">{{ totalStars }}</div>
         <div style="font-size:12px;color:#94A3B8;margin-top:6px">Total Stars</div>
       </div>
-      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center;display:flex;flex-direction:column;justify-content:center">
         <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:#06B6D4">{{ totalForks }}</div>
         <div style="font-size:12px;color:#94A3B8;margin-top:6px">Total Forks</div>
       </div>
-      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center">
+      <div style="padding:28px 20px;background:#0A0F1E;border:1px solid rgba(148,163,184,0.12);border-radius:8px;text-align:center;display:flex;flex-direction:column;justify-content:center">
         <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:#06B6D4">{{ licenseLabel }}</div>
         <div style="font-size:12px;color:#94A3B8;margin-top:6px">License</div>
+        <div style="font-size:11px;color:#64748B;margin-top:4px">{{ licenseCoverage }}</div>
       </div>
     </div>
 
@@ -367,7 +369,11 @@ class Component extends DCLogic {
     await shared.loadContent(this.sb, this.sectionIds);
     this.loadRepoStats();
     this.loadCustomRepos();
+    // DB가 응답하지 않을 때 로딩 표시가 영원히 남지 않도록 15초 후에는 받은 값만으로 표시한다.
+    this.customTimeout = setTimeout(() => this.setState({ customLoaded: true }), 15000);
   }
+
+  componentWillUnmount() { clearTimeout(this.customTimeout); }
 
   loadCustomRepos = async () => {
     const admin = !!this.state.isAdmin;
@@ -380,13 +386,13 @@ class Component extends DCLogic {
       // status 컬럼이 없는 등 스키마 문제일 때 목록을 통째로 비우지 않도록 필터 없이 재시도한다.
       const retry = await this.sb.from('custom_repos').select('*').order('created_at', { ascending: true });
       if (retry.error || !retry.data) {
-        this.setState({ repoLoadErr: '등록된 저장소 목록을 불러오지 못했습니다: ' + error.message });
+        this.setState({ repoLoadErr: '등록된 저장소 목록을 불러오지 못했습니다: ' + error.message, customLoaded: true });
         return;
       }
       data = retry.data;
       this.setState({ repoLoadErr: '저장소 승인 정보를 불러오지 못해 전체 목록을 표시합니다. (' + error.message + ')' });
     }
-    if (!data) return;
+    if (!data) return this.setState({ customLoaded: true });
     const rows = data.map(r => ({ ...r, status: r.status || 'approved' }));
     this.setState({ customRepos: rows });
     this.loadCustomRepoStats(rows.filter(r => r.status === 'approved'));
@@ -496,7 +502,7 @@ class Component extends DCLogic {
       const stats = await this.fetchRepoStats(parsed.owner, parsed.repo);
       return { ...stats, customName: c.name, customId: c.id };
     }));
-    this.setState({ customRepoStats: results });
+    this.setState({ customRepoStats: results, customLoaded: true });
   };
 
   openAddRepo = () => this.setState({ showAddRepo: true, addRepoErr: '' });
@@ -706,6 +712,9 @@ class Component extends DCLogic {
       groupMap[key].items.push(r);
     });
     orgGroups.forEach(g => { g.countLabel = '저장소 ' + g.items.length; });
+    const allLoaded = !!(this.state.statsLoaded && this.state.customLoaded);
+    const loadingDots = (k) => React.createElement('span', { key: k, style: { display: 'inline-flex', gap: '5px', alignItems: 'center', height: '1em' } },
+      [0, 1, 2].map(i => React.createElement('span', { key: i, style: { width: '7px', height: '7px', borderRadius: '50%', background: 'currentColor', animation: 'stat-pulse 1.2s ease-in-out ' + (i * 0.2) + 's infinite' } })));
     const totalStars = repos.reduce((s, r) => s + (r.stars || 0), 0);
     const totalForks = repos.reduce((s, r) => s + (r.forks || 0), 0);
     const totalIssues = repos.reduce((s, r) => s + (r.openIssues || 0), 0);
@@ -716,9 +725,12 @@ class Component extends DCLogic {
     const knownCommits = stats.filter(r => typeof r.commitCount === 'number' && !r.isFork);
     const totalCommits = knownCommits.length === 0 ? '—' : knownCommits.reduce((s, r) => s + r.commitCount, 0).toLocaleString('ko-KR');
     const licenseCounts = {};
-    stats.forEach(r => { if (r.license) licenseCounts[r.license] = (licenseCounts[r.license] || 0) + 1; });
+    stats.forEach(r => { if (r.license && r.license !== 'NOASSERTION' && !r.isFork) licenseCounts[r.license] = (licenseCounts[r.license] || 0) + 1; });
+    const licensedCount = Object.values(licenseCounts).reduce((s, n) => s + n, 0);
+    const ownRepoCount = stats.filter(r => !r.isFork).length;
+    const licenseCoverage = allLoaded ? ownRepoCount + '개 저장소 중 ' + licensedCount + '개 명시' : '';
     const licenseEntries = Object.entries(licenseCounts).sort((a, b) => b[1] - a[1]);
-    const licenseLabel = licenseEntries.length === 0 ? '—' : licenseEntries.length === 1 ? licenseEntries[0][0] : licenseEntries[0][0] + ' 외';
+    const licenseLabel = licenseEntries.length === 0 ? '—' : licenseEntries.length <= 2 ? licenseEntries.map(e => e[0]).join(' · ') : licenseEntries[0][0] + ' 외';
     const langBytes = {};
     stats.forEach(r => {
       if (r.languages && typeof r.languages === 'object' && Object.keys(r.languages).length > 0) {
@@ -759,9 +771,11 @@ class Component extends DCLogic {
       totalForks,
       totalIssues,
       totalBranches,
-      totalTags,
-      totalCommits,
-      licenseLabel,
+      licenseCoverage,
+      ...(allLoaded ? { totalStars, totalForks, totalBranches, totalTags, totalCommits, licenseLabel } : {
+        totalStars: loadingDots('s'), totalForks: loadingDots('f'), totalBranches: loadingDots('b'),
+        totalTags: loadingDots('t'), totalCommits: loadingDots('c'), licenseLabel: loadingDots('l')
+      }),
       languageLine,
       langBars,
       topLang,
